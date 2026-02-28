@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FocusFlow · TDAH</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0c10;--s1:#11141c;--s2:#181d28;--s3:#1e2535;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
+  --a:#7c5cfc;--a2:#fc5c7d;--a3:#5cf0c8;--w:#ffd166;
+  --tx:#e8eaf0;--mu:#6b7280;--mu2:#4b5563;
+  --q1c:rgba(252,92,125,.14);--q2c:rgba(124,92,252,.14);--q3c:rgba(255,209,102,.14);--q4c:rgba(107,114,128,.11);
+  --q1x:#fc5c7d;--q2x:#7c5cfc;--q3x:#ffd166;--q4x:#6b7280;
+}
+html,body{height:100%;background:var(--bg);overflow:hidden}
+body{color:var(--tx);font-family:'DM Sans',sans-serif}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+select,textarea,button{font-family:inherit}
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* HEADER */
+#hdr{display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:56px;min-height:56px;
+  background:var(--s1);border-bottom:1px solid var(--bd);gap:8px;flex-shrink:0}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;
+  background:linear-gradient(110deg,var(--a3),var(--a),var(--a2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.hdr-mid{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}
+#clock{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;color:var(--a3);letter-spacing:2px}
+#date-str{font-size:10px;color:var(--mu)}
+.sess-badge{background:var(--s2);border:1px solid var(--bd);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--mu);white-space:nowrap}
+.sess-badge b{color:var(--a3)}
+#pomo-w{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--bd);
+  border-radius:12px;padding:5px 11px;cursor:pointer;transition:border-color .2s;flex-shrink:0}
+#pomo-w:hover{border-color:var(--a)}
+.pw-label{font-size:9px;color:var(--mu);text-transform:uppercase;letter-spacing:1px}
+#pw-time{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;min-width:46px}
+#pw-task{font-size:10px;color:var(--tx);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbtn{width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:12px;transition:transform .15s;flex-shrink:0}
+.pbtn:hover{transform:scale(1.1)}.pbtn:active{transform:scale(.95)}
+.pbtn.go{background:var(--a3);color:#000}.pbtn.pa{background:var(--w);color:#000}.pbtn.st{background:var(--a2);color:#fff}
+
+/* BODY */
+#body{display:flex;flex:1;overflow:hidden}
+
+/* LEFT */
+#left{width:290px;min-width:290px;display:flex;flex-direction:column;background:var(--s1);border-right:1px solid var(--bd);overflow:hidden}
+#inp-area{padding:12px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.inp-label{font-family:'Syne',sans-serif;font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:1.2px}
+#brain{width:100%;min-height:90px;background:var(--s2);border:1.5px solid var(--bd);border-radius:12px;
+  color:var(--tx);font-size:13px;padding:11px;resize:none;outline:none;transition:border-color .25s;line-height:1.6}
+#brain:focus{border-color:var(--a);box-shadow:0 0 0 3px rgba(124,92,252,.1)}
+#brain::placeholder{color:var(--mu2);font-style:italic}
+.inp-row{display:flex;justify-content:flex-end;gap:7px;align-items:center}
+.hint{font-size:10px;color:var(--mu2);flex:1}
+#add-btn{background:var(--a);color:#fff;border:none;border-radius:10px;padding:7px 18px;
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;white-space:nowrap}
+#add-btn:hover{opacity:.88}#add-btn:active{transform:scale(.97)}#add-btn:disabled{opacity:.35;cursor:default}
+#suggest{margin:0 12px;padding:11px;background:linear-gradient(135deg,rgba(124,92,252,.11),rgba(92,240,200,.05));
+  border:1px solid rgba(124,92,252,.22);border-radius:12px;font-size:11px;color:var(--tx);
+  line-height:1.7;display:none;animation:fadeIn .4s}
+#suggest.show{display:block}
+#suggest b{color:var(--a3);font-weight:500}
+.sug-tag{font-size:9px;color:var(--a);font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+#bklog{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
+.bk-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.bk-hdr h3{font-family:'Syne',sans-serif;font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:1px}
+#clear-done{font-size:10px;color:var(--mu2);background:none;border:none;cursor:pointer;transition:color .2s;display:none}
+#clear-done:hover{color:var(--a2)}
+.tcard{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:9px 11px;
+  display:flex;align-items:flex-start;gap:8px;transition:border-color .2s,transform .15s;animation:slideIn .3s}
+.tcard:hover{border-color:var(--bd2);transform:translateX(2px)}
+.tcard.done{opacity:.38}.tcard.done .t-title{text-decoration:line-through}
+.t-ico{font-size:16px;flex-shrink:0;margin-top:1px}
+.t-body{flex:1;min-width:0}
+.t-title{font-size:12px;font-weight:500;line-height:1.4}
+.t-meta{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
+.ctag{font-size:9px;padding:2px 7px;border-radius:20px;background:rgba(124,92,252,.18);color:var(--a);font-weight:500}
+.qtag{font-size:9px;padding:2px 7px;border-radius:20px;font-weight:600}
+.q1t{background:rgba(252,92,125,.18);color:var(--q1x)}.q2t{background:rgba(124,92,252,.18);color:var(--q2x)}
+.q3t{background:rgba(255,209,102,.18);color:var(--q3x)}.q4t{background:rgba(107,114,128,.18);color:var(--q4x)}
+.t-acts{display:flex;gap:3px;flex-shrink:0}
+.ibtn{background:none;border:none;cursor:pointer;font-size:13px;opacity:.42;transition:opacity .2s;padding:2px;border-radius:5px}
+.ibtn:hover{opacity:1;background:rgba(255,255,255,.06)}
+#empty-msg{font-size:11px;color:var(--mu2);line-height:1.9;margin-top:4px;font-style:italic}
+
+/* RIGHT */
+#right{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.prog-wrap{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:11px 14px}
+.prog-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-bottom:7px}
+.prog-lbl b{color:var(--a3)}
+.prog-bar{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+#prog-fill{height:100%;background:linear-gradient(90deg,var(--a),var(--a3));border-radius:3px;width:0%;transition:width .6s}
+
+/* MATRIX */
+#matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quad{border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:7px;
+  border:2px solid transparent;min-height:160px;position:relative;overflow:hidden;
+  transition:border-color .2s,box-shadow .2s}
+.quad::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.02),transparent 60%);pointer-events:none}
+.q1{background:var(--q1c);border-color:rgba(252,92,125,.12)}
+.q2{background:var(--q2c);border-color:rgba(124,92,252,.12)}
+.q3{background:var(--q3c);border-color:rgba(255,209,102,.12)}
+.q4{background:var(--q4c);border-color:rgba(107,114,128,.1)}
+.quad.drag-over{border-color:var(--a3)!important;box-shadow:0 0 0 3px rgba(92,240,200,.18)!important}
+.q-hdr{display:flex;align-items:center;gap:7px}
+.q-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.q-title{font-family:'Syne',sans-serif;font-size:11.5px;font-weight:700}
+.q-sub{font-size:9px;color:var(--mu)}
+.q-list{display:flex;flex-direction:column;gap:4px;overflow-y:auto;max-height:190px;min-height:28px}
+.q-empty{font-size:10px;color:var(--mu2);padding:4px 2px;font-style:italic}
+
+/* DRAG ITEMS */
+.qi{background:rgba(255,255,255,.04);border-radius:8px;padding:6px 8px;
+  display:flex;align-items:center;gap:6px;
+  transition:background .15s,opacity .2s;
+  cursor:grab;user-select:none}
+.qi:hover{background:rgba(255,255,255,.09)}
+.qi:active{cursor:grabbing}
+.qi.dragging{opacity:.25}
+.qi.done{opacity:.35}.qi.done .qi-title{text-decoration:line-through}
+.qi-grip{font-size:12px;color:var(--mu2);flex-shrink:0;opacity:.5;line-height:1}
+.qi-ico{font-size:13px;flex-shrink:0}
+.qi-title{font-size:11px;flex:1;line-height:1.4}
+.qi-pomo{font-size:10px;opacity:0;transition:opacity .2s}
+.qi:hover .qi-pomo{opacity:.65}
+.qi-ck{width:14px;height:14px;border-radius:4px;border:1.5px solid rgba(255,255,255,.18);background:none;cursor:pointer;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s}
+.qi-ck.on{background:var(--a3);border-color:var(--a3);color:#000}
+
+/* DEV / IDEAS */
+.dev-sec{background:linear-gradient(135deg,rgba(92,240,200,.07),rgba(124,92,252,.06));
+  border:1px solid rgba(92,240,200,.17);border-radius:14px;padding:13px}
+.sec-head{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:9px}
+.dev-chips{display:flex;flex-wrap:wrap;gap:6px}
+.d-chip{background:rgba(92,240,200,.08);border:1px solid rgba(92,240,200,.18);border-radius:20px;
+  padding:5px 12px;font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer;transition:background .2s}
+.d-chip:hover{background:rgba(92,240,200,.17)}.d-chip.done{opacity:.35;text-decoration:line-through}
+.ideas-sec{background:linear-gradient(135deg,rgba(255,209,102,.07),rgba(252,92,125,.06));
+  border:1px solid rgba(255,209,102,.17);border-radius:14px;padding:13px}
+.ideas-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.sticky{background:rgba(255,209,102,.09);border:1px solid rgba(255,209,102,.2);border-radius:10px;
+  padding:9px 13px;font-size:11px;max-width:180px;line-height:1.5;transition:transform .18s;cursor:default}
+.sticky:hover{transform:rotate(-1.5deg) scale(1.04)}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--s2);border:1px solid var(--a3);border-radius:12px;padding:10px 20px;
+  font-size:12px;color:var(--a3);font-family:'Syne',sans-serif;z-index:999;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;white-space:nowrap}
+#toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* POMO MODAL */
+#pomo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;
+  align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s}
+#pomo-overlay.open{display:flex}
+#pomo-modal{background:var(--s1);border:1px solid var(--bd2);border-radius:20px;padding:28px;
+  width:100%;max-width:360px;text-align:center;position:relative;box-shadow:0 8px 40px rgba(0,0,0,.6);
+  animation:popIn .3s cubic-bezier(.34,1.56,.64,1)}
+#pomo-modal h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:5px}
+#pomo-modal .sub{font-size:12px;color:var(--mu);margin-bottom:20px}
+#pm-time{font-family:'Syne',sans-serif;font-size:58px;font-weight:800;line-height:1;margin-bottom:7px}
+#pm-phase{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:2px;margin-bottom:18px}
+#pm-select{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);font-size:12px;
+  padding:9px 11px;border-radius:10px;outline:none;margin-bottom:14px;cursor:pointer}
+.pm-btns{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+.pm-btn{border:none;border-radius:10px;padding:9px 22px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.pm-btn:hover{opacity:.86}
+.pm-btn.g{background:var(--a3);color:#000}.pm-btn.y{background:var(--w);color:#000}
+.pm-btn.r{background:var(--a2);color:#fff}.pm-btn.gr{background:var(--s3);color:var(--mu)}
+#pm-close{position:absolute;top:14px;right:16px;background:none;border:none;cursor:pointer;color:var(--mu);font-size:20px}
+#pm-close:hover{color:var(--tx)}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="hdr">
+    <div class="logo">FocusFlow ✦</div>
+    <div class="hdr-mid">
+      <div style="text-align:center">
+        <div id="clock" style="color:var(--a3)">00:00:00</div>
+        <div id="date-str" style="font-size:10px;color:var(--mu)"></div>
+      </div>
+      <div class="sess-badge">Sessão: <b id="sess-time">0s</b></div>
+    </div>
+    <div id="pomo-w" onclick="openPomo()">
+      <div>
+        <div class="pw-label" id="pw-label">🍅 Foco</div>
+        <div id="pw-time" style="color:var(--a3)">25:00</div>
+        <div id="pw-task"></div>
+      </div>
+      <button class="pbtn go" id="pw-btn" onclick="event.stopPropagation();togglePomo()">▶</button>
+      <button class="pbtn st" id="pw-stop" style="display:none" onclick="event.stopPropagation();stopPomo()">■</button>
+    </div>
+    <button id="notif-btn" onclick="requestNotifPermission()" title="Ativar notificações de horário"
+      style="background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:5px 11px;
+      cursor:pointer;font-size:15px;transition:border-color .2s,opacity .2s;opacity:.5;flex-shrink:0">🔕</button>
+  </header>
+
+  <div id="body">
+    <aside id="left">
+      <div id="inp-area">
+        <div class="inp-label">🧠 Despeje sua mente aqui</div>
+        <textarea id="brain" placeholder="Escreva tudo de uma vez...&#10;&#10;Ex: enviar mensagem no grupo até às 16:20, reunião às 15h, limpar casa, estudar inglês...&#10;&#10;(Ctrl+Enter para classificar)"></textarea>
+        <div class="inp-row">
+          <span class="hint">Ctrl+Enter • arraste tarefas na matriz</span>
+          <button id="add-btn" onclick="handleAdd()" disabled>✦ Classificar</button>
+        </div>
+      </div>
+      <div id="suggest">
+        <span class="sug-tag">✦ Sugestão · Neurociência</span>
+        <span id="sug-text"></span>
+      </div>
+      <div id="bklog">
+        <div class="bk-hdr">
+          <h3>Tarefas (<span id="task-count">0</span>)</h3>
+          <button id="clear-done" onclick="clearDone()">limpar concluídas</button>
+        </div>
+        <div id="task-list"></div>
+        <div id="empty-msg">Vazio! Escreva o que está na sua cabeça acima. 🧠</div>
+      </div>
+    </aside>
+
+    <main id="right">
+      <div class="prog-wrap">
+        <div class="prog-lbl"><span>Progresso do dia</span><b id="prog-label">0/0 · 0%</b></div>
+        <div class="prog-bar"><div id="prog-fill"></div></div>
+      </div>
+
+      <div id="matrix">
+        <div class="quad q1" data-q="1" id="quad-1">
+          <div class="q-hdr"><div class="q-dot" style="background:var(--q1x)"></div>
+            <div><div class="q-title">Faça Agora 🔥</div><div class="q-sub">Urgente + Importante</div></div></div>
+          <div class="q-list" id="q1-list"></div>
+        </div>
+        <div class="quad q2" data-q="2" id="quad-2">
+          <div class="q-hdr"><div class="q-dot" style="background:var(--q2x)"></div>
+            <div><div class="q-title">Agende ⭐</div><div class="q-sub">Importante, sem urgência</div></div></div>
+          <div class="q-list" id="q2-list"></div>
+        </div>
+        <div class="quad q3" data-q="3" id="quad-3">
+          <div class="q-hdr"><div class="q-dot" style="background:var(--q3x)"></div>
+            <div><div class="q-title">Delegue ⚡</div><div class="q-sub">Urgente, menos impacto</div></div></div>
+          <div class="q-list" id="q3-list"></div>
+        </div>
+        <div class="quad q4" data-q="4" id="quad-4">
+          <div class="q-hdr"><div class="q-dot" style="background:var(--q4x)"></div>
+            <div><div class="q-title">Elimine 🗑</div><div class="q-sub">Baixa prioridade</div></div></div>
+          <div class="q-list" id="q4-list"></div>
+        </div>
+      </div>
+
+      <div class="dev-sec" id="dev-sec" style="display:none">
+        <div class="sec-head" style="color:var(--a3)">🌱 Desenvolvimento &amp; Estudos</div>
+        <div class="dev-chips" id="dev-chips"></div>
+      </div>
+      <div class="ideas-sec" id="ideas-sec" style="display:none">
+        <div class="sec-head" style="color:var(--w)">💡 Ideias &amp; Brainstorm</div>
+        <div class="ideas-wrap" id="ideas-wrap"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div id="pomo-overlay" onclick="closePomo()">
+  <div id="pomo-modal" onclick="event.stopPropagation()">
+    <button id="pm-close" onclick="closePomo()">×</button>
+    <h2>🍅 Pomodoro</h2>
+    <p class="sub">Selecione uma tarefa e inicie o bloco de foco</p>
+    <div id="pm-time" style="color:var(--a3)">25:00</div>
+    <div id="pm-phase">⚡ Bloco de foco · 25 min</div>
+    <select id="pm-select"><option value="">— Selecione uma tarefa —</option></select>
+    <div class="pm-btns">
+      <button class="pm-btn g" id="pm-play" onclick="togglePomo()">▶ Iniciar</button>
+      <button class="pm-btn r" onclick="resetPomo()">■ Resetar</button>
+      <button class="pm-btn gr" onclick="closePomo()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════
+//  STORAGE
+// ═══════════════════════
+const LS_KEY='focusflow_v4';
+let tasks=[], idCtr=Date.now();
+function load(){try{tasks=JSON.parse(localStorage.getItem(LS_KEY)||'[]');}catch{tasks=[];}}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(tasks));}catch{}}
+
+// ═══════════════════════
+//  CLASSIFICAÇÃO
+//  Compara horário da tarefa com horário atual
+// ═══════════════════════
+const CATS=[
+  {cat:'📚 Estudos',    emo:'📚',kw:['estudar','estudo','aprender','curso','lição','ler','leitura','livro','skill','aula','pesquisar','review','praticar','treinar','certificado']},
+  {cat:'🌱 Dev Pessoal',emo:'🌱',kw:['terapia','meditação','meditar','exercício','academia','correr','caminhar','yoga','descanso','dormir','saúde','ginástica','bem-estar','mindfulness']},
+  {cat:'🏠 Casa',       emo:'🏠',kw:['limpar','casa','limpeza','arrumar','lavar','cozinhar','comprar','supermercado','louça','roupa','faxina','organizar','quarto','cozinha','mercado']},
+  {cat:'👥 Reunião',    emo:'👥',kw:['reunião','meeting','call','sync','apresentação','standup','feedback','1:1','conversa','entrevista','atendimento','zoom','teams']},
+  {cat:'💼 Trabalho',   emo:'💼',kw:['cliente','projeto','tarefa','email','relatório','automação','implementar','desenvolver','entregar','prazo','deadline','contrato','proposta','orçamento','sistema','mensagem','grupo','whatsapp','slack']},
+  {cat:'💡 Ideia',      emo:'💡',kw:['ideia','pensar','planejar','estratégia','futuramente','talvez','e se','poderia','brainstorm','inventar','sonho','visão']},
+  {cat:'🎯 Pessoal',    emo:'🎯',kw:[]},
+];
+const WORD_URGENT    = ['urgente','agora','imediato','essa manhã','amanhã cedo','o mais rápido','logo'];
+const WORD_IMPORTANT = ['importante','prioridade','crítico','essencial','estratégico','impacto','cliente','reunião','projeto','meta','resultado','apresentar'];
+
+// Extrai horário do texto e diz se é urgente agora
+function timeUrgency(text) {
+  const l = text.toLowerCase();
+  const patterns = [
+    /\b(\d{1,2}):(\d{2})\b/,
+    /\b(\d{1,2})h(\d{2})\b/,
+    /(?:às|as|até\s*às|até\s*as)\s+(\d{1,2})(?::(\d{2}))?/,
+    /\b(\d{1,2})h\b/,
+  ];
+  let h=null, m=0;
+  for(const p of patterns){
+    const mt=l.match(p);
+    if(mt){ h=parseInt(mt[1]); m=parseInt(mt[2]||'0'); break; }
+  }
+  if(h===null) return null;
+
+  const now      = new Date();
+  const taskMin  = h*60+m;
+  const nowMin   = now.getHours()*60+now.getMinutes();
+  const diff     = taskMin - nowMin;
+
+  // já passou ou em até 30 min → crítico (Q1)
+  if(diff <= 30)  return 'now';
+  // nas próximas 2h → urgente
+  if(diff <= 120) return 'soon';
+  // mais tarde hoje
+  return 'later';
+}
+
+function classify(text){
+  const l=text.toLowerCase();
+  const cat=CATS.find(r=>r.kw.some(k=>l.includes(k)))||CATS[CATS.length-1];
+  const tu       = timeUrgency(text);
+  const wUrgent  = WORD_URGENT.some(w=>l.includes(w));
+  const wImport  = WORD_IMPORTANT.some(w=>l.includes(w))||['📚 Estudos','🌱 Dev Pessoal','💼 Trabalho','👥 Reunião'].includes(cat.cat);
+
+  // Qualquer tarefa com horário passado ou iminente → urgente E importante → Q1
+  const urgent   = wUrgent || tu==='now' || tu==='soon';
+  const important= wImport || tu==='now' || tu==='soon' || tu==='later';
+
+  let q = urgent&&important?1 : !urgent&&important?2 : urgent?3 : 4;
+  if(['📚 Estudos','🌱 Dev Pessoal'].includes(cat.cat)&&q===4) q=2;
+  return{category:cat.cat, emoji:cat.emo, quadrant:q};
+}
+
+// ═══════════════════════
+//  SUGESTÃO
+// ═══════════════════════
+function buildSuggestion(){
+  const active=tasks.filter(t=>!t.done);
+  if(!active.length) return null;
+  const q1=active.filter(t=>t.quadrant===1);
+  const q2=active.filter(t=>t.quadrant===2);
+  const q3=active.filter(t=>t.quadrant===3);
+  const dev=active.find(t=>['📚 Estudos','🌱 Dev Pessoal'].includes(t.category));
+  if(q1.length>0) return`🔥 <b>Eat the Frog:</b> Comece por <b>"${q1[0].title}"</b> — urgente E importante. Eliminar a maior pressão primeiro libera dopamina e cria momentum para o dia.`;
+  if(dev&&q2.some(t=>t.id===dev.id)) return`🧠 <b>Deep Work:</b> Sem urgências agora! Iniciar com <b>"${dev.title}"</b> ativa o estado de fluxo e melhora o foco para as próximas tarefas.`;
+  if(q2.length>0) return`✨ <b>Momentum:</b> Inicie com <b>"${q2[0].title}"</b>. Um Pomodoro de 25 min rende mais que 2h dispersas.`;
+  if(q3.length>0) return`⚡ <b>Quick Wins:</b> Foque em <b>"${q3[0].title}"</b>. Sprints curtos com pausa evitam o colapso de energia.`;
+  return`✅ <b>Flow State:</b> Tudo organizado! Aproveite para estudar — são os juros compostos da sua evolução. 🚀`;
+}
+
+// ═══════════════════════
+//  RENDER
+// ═══════════════════════
+function render(){
+  save();
+  const done=tasks.filter(t=>t.done).length, total=tasks.length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=`${done}/${total} · ${pct}%`;
+  document.getElementById('task-count').textContent=total;
+
+  // Backlog
+  const list=document.getElementById('task-list');
+  list.innerHTML='';
+  document.getElementById('empty-msg').style.display=tasks.length?'none':'block';
+  document.getElementById('clear-done').style.display=done?'inline':'none';
+  tasks.forEach(t=>{
+    const el=document.createElement('div');
+    el.className='tcard'+(t.done?' done':'');
+    el.innerHTML=`<span class="t-ico">${t.emoji}</span>
+      <div class="t-body"><div class="t-title">${esc(t.title)}</div>
+        <div class="t-meta"><span class="ctag">${esc(t.category)}</span>
+          <span class="qtag q${t.quadrant}t">${['','Q1 🔥','Q2 ⭐','Q3 ⚡','Q4 🗑'][t.quadrant]}</span></div></div>
+      <div class="t-acts">
+        <button class="ibtn" onclick="startPomoTask(${t.id})">🍅</button>
+        <button class="ibtn" onclick="toggleDone(${t.id})">${t.done?'↩':'✓'}</button>
+        <button class="ibtn" onclick="removeTask(${t.id})">✕</button></div>`;
+    list.appendChild(el);
+  });
+
+  // Matrix
+  [1,2,3,4].forEach(n=>{
+    const c=document.getElementById(`q${n}-list`);
+    c.innerHTML='';
+    const qt=tasks.filter(t=>t.quadrant===n);
+    if(!qt.length){c.innerHTML='<div class="q-empty">Arraste tarefas aqui ou adicione novas</div>';return;}
+    qt.forEach(t=>{
+      const el=document.createElement('div');
+      el.className='qi'+(t.done?' done':'');
+      el.draggable=true;
+      el.dataset.id=t.id;
+      el.innerHTML=`<span class="qi-grip">⠿</span>
+        <span class="qi-ico">${t.emoji}</span>
+        <span class="qi-title">${esc(t.title)}</span>
+        <span class="qi-pomo">🍅</span>
+        <button class="qi-ck${t.done?' on':''}" onclick="event.stopPropagation();toggleDone(${t.id})">${t.done?'✓':''}</button>`;
+      el.addEventListener('click',e=>{ if(!e.target.classList.contains('qi-ck')) startPomoTask(t.id); });
+      el.addEventListener('dragstart',onDragStart);
+      el.addEventListener('dragend',onDragEnd);
+      c.appendChild(el);
+    });
+  });
+
+  // Dev
+  const devT=tasks.filter(t=>['📚 Estudos','🌱 Dev Pessoal'].includes(t.category));
+  document.getElementById('dev-sec').style.display=devT.length?'block':'none';
+  if(devT.length){
+    const ch=document.getElementById('dev-chips');ch.innerHTML='';
+    devT.forEach(t=>{const el=document.createElement('div');el.className='d-chip'+(t.done?' done':'');
+      el.innerHTML=`<span>${t.emoji}</span><span>${esc(t.title)}</span><span style="opacity:.4">🍅</span>`;
+      el.onclick=()=>startPomoTask(t.id);ch.appendChild(el);});
+  }
+
+  // Ideas
+  const ideas=tasks.filter(t=>t.category==='💡 Ideia');
+  document.getElementById('ideas-sec').style.display=ideas.length?'block':'none';
+  if(ideas.length){
+    const w=document.getElementById('ideas-wrap');w.innerHTML='';
+    ideas.forEach(t=>{const el=document.createElement('div');el.className='sticky';el.textContent=t.title;w.appendChild(el);});
+  }
+
+  // Suggestion
+  const sug=buildSuggestion();
+  const sugEl=document.getElementById('suggest');
+  if(sug){sugEl.classList.add('show');document.getElementById('sug-text').innerHTML=sug;}
+  else sugEl.classList.remove('show');
+
+  // Pomo select
+  const sel=document.getElementById('pm-select');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">— Selecione uma tarefa —</option>';
+  tasks.filter(t=>!t.done).forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=`${t.emoji} ${t.title}`;sel.appendChild(o);});
+  if(prev)sel.value=prev;
+  const pt=pomoTaskId?tasks.find(t=>t.id===pomoTaskId):null;
+  document.getElementById('pw-task').textContent=pt?pt.title:'';
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ═══════════════════════
+//  DRAG & DROP
+// ═══════════════════════
+let dragId=null;
+
+function onDragStart(e){
+  dragId=parseInt(this.dataset.id);
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+}
+function onDragEnd(){
+  this.classList.remove('dragging');
+  document.querySelectorAll('.quad').forEach(q=>q.classList.remove('drag-over'));
+  dragId=null;
+}
+
+document.querySelectorAll('.quad').forEach(quad=>{
+  quad.addEventListener('dragover',e=>{
+    e.preventDefault();
+    document.querySelectorAll('.quad').forEach(q=>q.classList.remove('drag-over'));
+    quad.classList.add('drag-over');
+  });
+  quad.addEventListener('dragleave',e=>{
+    if(!quad.contains(e.relatedTarget)) quad.classList.remove('drag-over');
+  });
+  quad.addEventListener('drop',e=>{
+    e.preventDefault();
+    quad.classList.remove('drag-over');
+    if(!dragId) return;
+    const newQ=parseInt(quad.dataset.q);
+    const task=tasks.find(t=>t.id===dragId);
+    if(task&&task.quadrant!==newQ){
+      task.quadrant=newQ;
+      render();
+      showToast(`✦ Movida para ${['','Faça Agora','Agende','Delegue','Elimine'][newQ]}!`);
+    }
+    dragId=null;
+  });
+});
+
+// ═══════════════════════
+//  AÇÕES
+// ═══════════════════════
+function handleAdd(){
+  const val=document.getElementById('brain').value;
+  const lines=val.split(/[\n,;]+/).map(l=>l.trim()).filter(Boolean);
+  if(!lines.length) return;
+  lines.forEach(line=>{const c=classify(line);tasks.push({id:idCtr++,title:line,...c,done:false});});
+  document.getElementById('brain').value='';
+  document.getElementById('add-btn').disabled=true;
+  render();
+  showToast(`✨ ${lines.length} tarefa${lines.length>1?'s':''} organizada${lines.length>1?'s':''}!`);
+}
+function toggleDone(id){const t=tasks.find(t=>t.id===id);if(t){t.done=!t.done;render();}}
+function removeTask(id){tasks=tasks.filter(t=>t.id!==id);if(pomoTaskId===id){pomoTaskId=null;stopPomo();}render();}
+function clearDone(){tasks=tasks.filter(t=>!t.done);render();showToast('🗑 Concluídas removidas.');}
+
+// ═══════════════════════
+//  TOAST
+// ═══════════════════════
+let toastTimer;
+function showToast(msg){
+  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('on');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('on'),3000);
+}
+
+// ═══════════════════════
+//  RELÓGIO & SESSÃO
+// ═══════════════════════
+const sessStart=Date.now();
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('date-str').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  const s=Math.floor((Date.now()-sessStart)/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;
+  document.getElementById('sess-time').textContent=h>0?`${h}h ${m}m`:m>0?`${m}m ${sc}s`:`${sc}s`;
+}
+setInterval(updateClock,1000); updateClock();
+
+// ═══════════════════════
+//  POMODORO
+// ═══════════════════════
+const PW=25*60,PB=5*60;
+let pomoTime=PW,pomoRun=false,pomoPhase='work',pomoTaskId=null,pomoInt=null;
+
+function updatePomoUI(){
+  const str=fmt(pomoTime);
+  document.getElementById('pw-time').textContent=str;
+  document.getElementById('pm-time').textContent=str;
+  const col=pomoPhase==='work'?'var(--a3)':'var(--w)';
+  document.getElementById('pw-time').style.color=col;
+  document.getElementById('pm-time').style.color=col;
+  document.getElementById('pw-label').textContent=pomoPhase==='work'?'🍅 Foco':'☕ Pausa';
+  document.getElementById('pm-phase').textContent=pomoPhase==='work'?'⚡ Bloco de foco · 25 min':'☕ Pausa · 5 min';
+  const btn=document.getElementById('pw-btn'),pb=document.getElementById('pm-play');
+  if(pomoRun){btn.textContent='⏸';btn.className='pbtn pa';pb.textContent='⏸ Pausar';pb.className='pm-btn y';}
+  else{btn.textContent='▶';btn.className='pbtn go';pb.textContent='▶ Iniciar';pb.className='pm-btn g';}
+  document.getElementById('pw-stop').style.display=pomoRun?'flex':'none';
+}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function togglePomo(){
+  pomoRun=!pomoRun;
+  if(pomoRun){
+    pomoInt=setInterval(()=>{
+      pomoTime--;
+      if(pomoTime<=0){
+        clearInterval(pomoInt);pomoRun=false;
+        const nx=pomoPhase==='work'?'break':'work';
+        pomoPhase=nx;pomoTime=nx==='work'?PW:PB;
+        beep();
+        showToast(nx==='break'?'🎉 Foco concluído! Descanse 5 minutos.':'⏰ Pausa encerrada! Bora focar!');
+      }
+      updatePomoUI();
+    },1000);
+  } else clearInterval(pomoInt);
+  updatePomoUI();
+}
+function stopPomo(){clearInterval(pomoInt);pomoRun=false;pomoTime=PW;pomoPhase='work';updatePomoUI();}
+function resetPomo(){stopPomo();}
+function openPomo(){document.getElementById('pomo-overlay').classList.add('open');updatePomoUI();}
+function closePomo(){document.getElementById('pomo-overlay').classList.remove('open');}
+function startPomoTask(id){pomoTaskId=id;document.getElementById('pm-select').value=id;stopPomo();openPomo();render();}
+document.getElementById('pm-select').addEventListener('change',function(){pomoTaskId=this.value?parseInt(this.value):null;render();});
+function beep(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    [880,1100,880].forEach((f,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.frequency.value=f;
+      const t=ctx.currentTime+i*0.28;
+      g.gain.setValueAtTime(0.25,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.25);
+      o.start(t);o.stop(t+0.25);
+    });
+  }catch{}
+}
+updatePomoUI();
+
+// ═══════════════════════
+//  INPUT
+// ═══════════════════════
+document.getElementById('brain').addEventListener('input',function(){
+  document.getElementById('add-btn').disabled=!this.value.trim();
+});
+document.getElementById('brain').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&e.ctrlKey){e.preventDefault();handleAdd();}
+});
+
+load(); render();
+
+// ═══════════════════════════════════════════
+//  SISTEMA DE NOTIFICAÇÕES
+//  - Pede permissão ao usuário
+//  - Verifica a cada minuto se alguma tarefa
+//    está chegando perto do horário
+//  - Avisa 15min antes e na hora exata
+// ═══════════════════════════════════════════
+
+// Guarda quais alertas já foram disparados (evita repetir)
+const notifiedSet = new Set();
+
+// Extrai o horário em minutos totais de uma tarefa (retorna null se não tiver)
+function extractTaskMinutes(title) {
+  const l = title.toLowerCase();
+  const patterns = [
+    /\b(\d{1,2}):(\d{2})\b/,
+    /\b(\d{1,2})h(\d{2})\b/,
+    /(?:às|as|até\s*às|até\s*as)\s+(\d{1,2})(?::(\d{2}))?/,
+    /\b(\d{1,2})h\b/,
+  ];
+  for(const p of patterns){
+    const m = l.match(p);
+    if(m) return parseInt(m[1])*60 + parseInt(m[2]||'0');
+  }
+  return null;
+}
+
+// Pede permissão para notificações
+async function requestNotifPermission() {
+  if(!('Notification' in window)) {
+    showToast('⚠️ Seu navegador não suporta notificações.');
+    return;
+  }
+  if(Notification.permission === 'granted') {
+    showToast('✅ Notificações já estão ativas!');
+    updateNotifBtn();
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if(perm === 'granted') {
+    showToast('🔔 Notificações ativadas! Você será avisado antes de cada tarefa.');
+    updateNotifBtn();
+  } else {
+    showToast('❌ Permissão negada. Ative nas configurações do navegador.');
+  }
+}
+
+function updateNotifBtn() {
+  const btn = document.getElementById('notif-btn');
+  if(!btn) return;
+  const granted = Notification.permission === 'granted';
+  btn.textContent = granted ? '🔔' : '🔕';
+  btn.title = granted ? 'Notificações ativas' : 'Ativar notificações';
+  btn.style.opacity = granted ? '1' : '0.5';
+}
+
+// Dispara notificação do sistema + beep
+function fireNotif(title, body, tag) {
+  beep();
+  if(Notification.permission !== 'granted') return;
+  try {
+    const n = new Notification(title, {
+      body,
+      tag,          // evita duplicatas com a mesma tag
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🍅</text></svg>',
+      badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚡</text></svg>',
+    });
+    n.onclick = () => { window.focus(); n.close(); };
+    // Fecha sozinho após 8s
+    setTimeout(() => n.close(), 8000);
+  } catch(e) {}
+}
+
+// Verificação rodando a cada 30 segundos
+function checkTaskAlerts() {
+  const now    = new Date();
+  const nowMin = now.getHours()*60 + now.getMinutes();
+
+  tasks.filter(t => !t.done).forEach(t => {
+    const taskMin = extractTaskMinutes(t.title);
+    if(taskMin === null) return;
+
+    const diff = taskMin - nowMin;
+
+    // Alerta de 15 minutos antes
+    const key15 = `${t.id}-15`;
+    if(diff > 13 && diff <= 15 && !notifiedSet.has(key15)) {
+      notifiedSet.add(key15);
+      fireNotif(
+        `⏰ Em 15 minutos: ${t.emoji} ${t.title}`,
+        `Prepare-se! Essa tarefa começa em breve.`,
+        key15
+      );
+      showToast(`⏰ Em 15 min: "${t.title}"`);
+    }
+
+    // Alerta na hora (janela de ±1 min)
+    const keyNow = `${t.id}-now`;
+    if(diff >= -1 && diff <= 1 && !notifiedSet.has(keyNow)) {
+      notifiedSet.add(keyNow);
+      fireNotif(
+        `🔥 Agora: ${t.emoji} ${t.title}`,
+        `É a hora! Foque nessa tarefa agora.`,
+        keyNow
+      );
+      showToast(`🔥 AGORA: "${t.title}"`);
+    }
+  });
+}
+
+// Inicia loop de verificação
+setInterval(checkTaskAlerts, 30000);
+checkTaskAlerts(); // verifica imediatamente ao carregar
+
+// Atualiza visual do botão ao carregar
+updateNotifBtn();
+
+</body>
+</html>
