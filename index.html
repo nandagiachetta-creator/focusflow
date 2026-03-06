@@ -1895,18 +1895,36 @@ async function onAuthLogin(user) {
 }
 
 async function initAuth() {
-  // Verifica se é redirect de convite/recuperação (hash na URL)
-  const hash = window.location.hash;
-  if (hash && (hash.includes('type=invite') || hash.includes('type=recovery'))) {
-    window.history.replaceState(null, '', window.location.pathname);
-    // Aguarda o SDK processar o hash automaticamente
-    await new Promise(r => setTimeout(r, 400));
-    document.getElementById('setpass-tagline').textContent = 'Você foi convidada!';
-    showAuthView('set-password');
-    return;
-  }
+  // Escuta eventos de auth — captura PASSWORD_RECOVERY e SIGNED_IN corretamente
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      document.getElementById('setpass-tagline').textContent = 'Redefina sua senha';
+      showAuthView('set-password');
+      return;
+    }
+    if (event === 'SIGNED_IN' && session?.user) {
+      const setPassVisible = document.getElementById('av-set-password').style.display === 'flex';
+      if (!setPassVisible) {
+        if (session.user.user_metadata?.must_change_password) {
+          document.getElementById('setpass-tagline').textContent = 'Primeiro acesso — defina sua senha';
+          showAuthView('set-password');
+        } else {
+          onAuthLogin(session.user);
+        }
+      }
+    }
+  });
+
+  // Verifica sessão existente ao carregar
   const { data: { session } } = await sb.auth.getSession();
-  if (session?.user) { onAuthLogin(session.user); }
+  if (session?.user) {
+    if (session.user.user_metadata?.must_change_password) {
+      document.getElementById('setpass-tagline').textContent = 'Primeiro acesso — defina sua senha';
+      showAuthView('set-password');
+    } else {
+      onAuthLogin(session.user);
+    }
+  }
 }
 
 document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
