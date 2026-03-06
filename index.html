@@ -459,6 +459,9 @@ select,textarea,button{font-family:inherit}
       <div id="login-err" class="auth-error"></div>
       <button class="auth-btn primary" id="login-btn" onclick="doLogin()">Entrar</button>
       <div class="auth-switch" style="color:var(--mu2);font-size:12px">Acesso por convite da administradora.</div>
+      <div style="text-align:center;margin-top:8px">
+        <button onclick="showAuthView('reset')" style="background:none;border:none;color:var(--mu);font-size:13px;cursor:pointer;text-decoration:underline;font-family:inherit">Esqueci minha senha</button>
+      </div>
     </div>
   </div>
   <!-- DEFINIR SENHA (convite / recuperação) -->
@@ -471,6 +474,20 @@ select,textarea,button{font-family:inherit}
       <div class="auth-field"><label>Confirmar senha</label><input type="password" id="new-pass2" placeholder="Repita a senha"/></div>
       <div id="setpass-err" class="auth-error"></div>
       <button class="auth-btn primary" id="setpass-btn" onclick="doSetPassword()">Confirmar e entrar</button>
+    </div>
+  </div>
+  <!-- RESETAR SENHA -->
+  <div id="av-reset" class="auth-view" style="display:none">
+    <div class="auth-card">
+      <div class="auth-logo-big">FocusFlow ✦</div>
+      <p class="auth-tagline">Vamos te ajudar a recuperar o acesso</p>
+      <h2>Resetar senha</h2>
+      <div class="auth-field"><label>E-mail</label><input type="email" id="reset-email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')doRequestReset()"/></div>
+      <div id="reset-err" class="auth-error"></div>
+      <button class="auth-btn primary" id="reset-btn" onclick="doRequestReset()">Enviar link de reset</button>
+      <div style="text-align:center;margin-top:12px">
+        <button onclick="showAuthView('login')" style="background:none;border:none;color:var(--mu);font-size:13px;cursor:pointer;text-decoration:underline;font-family:inherit">← Voltar ao login</button>
+      </div>
     </div>
   </div>
   <!-- CONFIRMAR E-MAIL -->
@@ -1775,7 +1792,24 @@ function showAuthView(v) {
   document.getElementById('av-login').style.display        = v === 'login'        ? 'flex' : 'none';
   document.getElementById('av-set-password').style.display = v === 'set-password' ? 'flex' : 'none';
   document.getElementById('av-confirm').style.display      = v === 'confirm'      ? 'flex' : 'none';
+  document.getElementById('av-reset').style.display        = v === 'reset'        ? 'flex' : 'none';
   document.getElementById('auth-overlay').style.display    = 'flex';
+}
+
+async function doRequestReset() {
+  const email = document.getElementById('reset-email').value.trim();
+  const errEl = document.getElementById('reset-err');
+  const btn   = document.getElementById('reset-btn');
+  errEl.textContent = '';
+  if (!email) { errEl.textContent = 'Digite seu e-mail.'; return; }
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+  btn.disabled = false; btn.textContent = 'Enviar link de reset';
+  if (error) { errEl.textContent = error.message; return; }
+  errEl.style.color = 'var(--a)';
+  errEl.textContent = '✅ Link enviado! Verifique seu e-mail.';
 }
 
 async function doLogin() {
