@@ -245,6 +245,54 @@ select,textarea,button{font-family:inherit}
 .kcard-del:hover{color:var(--a2)!important;opacity:1!important;}
 @media(max-width:768px){#est-kanban-board{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){#est-kanban-board{grid-template-columns:1fr}}
+
+/* ── EVENTOS ── */
+#eventos-screen{flex:1;display:none;flex-direction:column;overflow-y:auto;background:var(--bg);padding:16px;gap:16px}
+#eventos-screen.active{display:flex}
+.ev-form-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.ev-form-card h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--a3);margin-bottom:4px}
+.ev-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ev-field{display:flex;flex-direction:column;gap:5px}
+.ev-field label{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.ev-field input{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;color:var(--tx);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
+.ev-field input:focus{border-color:var(--a)}
+.ev-field.full{grid-column:1/-1}
+.ev-add-btn{background:var(--a3);color:#faf7f2;border:none;border-radius:11px;padding:11px;font-family:'Playfair Display',serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s;width:100%}
+.ev-add-btn:hover{opacity:.85}
+.ev-cal-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.ev-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.ev-cal-nav h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--a3);text-transform:capitalize}
+.ev-cal-nbtn{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:5px 14px;cursor:pointer;font-size:16px;color:var(--tx);transition:background .2s}
+.ev-cal-nbtn:hover{background:var(--s3)}
+.ev-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.ev-cal-dow{text-align:center;font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:1px;padding:4px 0;font-weight:600}
+.ev-cal-day{min-height:54px;border-radius:10px;padding:6px;background:var(--s2);border:1px solid var(--bd);position:relative}
+.ev-cal-day.today{border-color:var(--a);background:rgba(107,143,113,.1)}
+.ev-cal-day.other-month{opacity:.3}
+.ev-cal-day.has-event{cursor:pointer}
+.ev-cal-day-num{font-size:12px;font-weight:600;color:var(--tx)}
+.ev-cal-day.today .ev-cal-day-num{color:var(--a3);font-weight:800}
+.ev-dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+.ev-dot{width:7px;height:7px;border-radius:50%;background:var(--a2)}
+.ev-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#2a2a2a;color:#faf7f2;border-radius:10px;padding:10px 14px;font-size:12px;line-height:1.5;white-space:pre-line;z-index:500;pointer-events:none;opacity:0;transition:opacity .2s;min-width:160px;max-width:220px;box-shadow:0 4px 16px rgba(0,0,0,.25);text-align:left}
+.ev-cal-day.has-event:hover .ev-tooltip{opacity:1}
+#reminder-widget{background:#faf7f2;border:1.5px solid rgba(61,92,66,.25);border-radius:12px;padding:5px 12px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.08);min-width:110px;flex-shrink:0}
+#reminder-widget:hover{box-shadow:0 4px 14px rgba(0,0,0,.14)}
+.rem-label{font-size:9px;color:#7a7a7a;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+#rem-text{font-size:11px;color:#3d5c42;font-weight:700;text-align:center;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-list-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:8px}
+.ev-list-card h3{font-family:'Playfair Display',serif;font-size:16px;color:var(--a3)}
+.ev-item{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ev-item-name{font-size:14px;font-weight:600;color:var(--tx)}
+.ev-item-meta{font-size:12px;color:var(--mu);margin-top:2px}
+.ev-item-del{background:none;border:none;cursor:pointer;font-size:16px;opacity:.35;transition:opacity .2s;padding:2px 6px}
+.ev-item-del:hover{opacity:1}
+@media(max-width:768px){
+  .ev-fields{grid-template-columns:1fr}
+  .ev-field.full{grid-column:1}
+  #eventos-screen.active{position:fixed;top:56px;bottom:58px;left:0;right:0;z-index:100}
+  #reminder-widget{min-width:80px}
+}
 #cl-top-row{display:flex;flex-direction:row;border-bottom:1px solid var(--bd);flex-shrink:0;align-items:stretch;}
 #cl-form-area{flex:1;padding:16px;background:var(--s1);display:flex;flex-direction:column;gap:12px;border-right:1px solid var(--bd);}
 @media(max-width:600px){#cl-top-row{flex-direction:column;}#cl-form-area{border-right:none;border-bottom:1px solid var(--bd);}}
@@ -522,9 +570,13 @@ select,textarea,button{font-family:inherit}
     <div class="hdr-mid">
       <div style="text-align:center">
         <div id="clock" style="color:var(--a3)">00:00:00</div>
-        <div id="date-str" style="font-size:10px;color:var(--mu)"></div>
+        <div id="date-str"></div>
       </div>
       <div class="sess-badge">Sessão: <b id="sess-time">0s</b></div>
+    </div>
+    <div id="reminder-widget" onclick="showScreen('eventos')" title="Ver agenda">
+      <div class="rem-label">📅 Próximo</div>
+      <div id="rem-text">sem eventos</div>
     </div>
     <div id="pomo-w" onclick="openPomo()">
       <div>
@@ -724,6 +776,55 @@ select,textarea,button{font-family:inherit}
     </div>
   </div>
 
+  <!-- EVENTOS SCREEN -->
+  <div id="eventos-screen">
+    <div class="ev-form-card">
+      <h3>📅 Novo compromisso</h3>
+      <div class="ev-fields">
+        <div class="ev-field full">
+          <label>Nome do evento</label>
+          <input type="text" id="ev-name" placeholder="Ex: Workshop da Nanda"/>
+        </div>
+        <div class="ev-field">
+          <label>Data</label>
+          <input type="date" id="ev-date"/>
+        </div>
+        <div class="ev-field">
+          <label>Horário</label>
+          <input type="time" id="ev-time"/>
+        </div>
+        <div class="ev-field full">
+          <label>Tema / pauta <span style="color:var(--mu);font-size:10px">(opcional)</span></label>
+          <input type="text" id="ev-theme" placeholder="Ex: Estratégias de marketing digital"/>
+        </div>
+      </div>
+      <button class="ev-add-btn" onclick="addEvent()">+ Adicionar compromisso</button>
+    </div>
+
+    <div class="ev-cal-card">
+      <div class="ev-cal-nav">
+        <button class="ev-cal-nbtn" onclick="evNavMonth(-1)">‹</button>
+        <h3 id="ev-cal-title"></h3>
+        <button class="ev-cal-nbtn" onclick="evNavMonth(1)">›</button>
+      </div>
+      <div class="ev-cal-grid" id="ev-cal-dow-row">
+        <div class="ev-cal-dow">Dom</div>
+        <div class="ev-cal-dow">Seg</div>
+        <div class="ev-cal-dow">Ter</div>
+        <div class="ev-cal-dow">Qua</div>
+        <div class="ev-cal-dow">Qui</div>
+        <div class="ev-cal-dow">Sex</div>
+        <div class="ev-cal-dow">Sáb</div>
+      </div>
+      <div class="ev-cal-grid" id="ev-cal-days" style="margin-top:4px"></div>
+    </div>
+
+    <div class="ev-list-card">
+      <h3>Próximos compromissos</h3>
+      <div id="ev-list"></div>
+    </div>
+  </div>
+
   <nav id="bottom-nav">
     <button class="bnav-btn active" id="bnav-main" onclick="showScreen('main')">
       <span class="bico">📋</span>
@@ -736,6 +837,10 @@ select,textarea,button{font-family:inherit}
     <button class="bnav-btn" id="bnav-estudos" onclick="showScreen('estudos')">
       <span class="bico">📚</span>
       <span>Estudos</span>
+    </button>
+    <button class="bnav-btn" id="bnav-eventos" onclick="showScreen('eventos')">
+      <span class="bico">📅</span>
+      <span>Agenda</span>
     </button>
   </nav>
 </div>
@@ -1280,13 +1385,15 @@ function saveClients() {
 }
 
 function showScreen(name) {
-  const isCl = name === 'clientes', isEst = name === 'estudos', isMain = !isCl && !isEst;
+  const isCl = name === 'clientes', isEst = name === 'estudos', isEv = name === 'eventos', isMain = !isCl && !isEst && !isEv;
   document.getElementById('body').style.display = isMain ? 'flex' : 'none';
   document.getElementById('clientes-screen').classList.toggle('active', isCl);
   document.getElementById('estudos-screen').classList.toggle('active', isEst);
+  document.getElementById('eventos-screen').classList.toggle('active', isEv);
   document.getElementById('bnav-main').classList.toggle('active', isMain);
   document.getElementById('bnav-clientes').classList.toggle('active', isCl);
   document.getElementById('bnav-estudos').classList.toggle('active', isEst);
+  document.getElementById('bnav-eventos').classList.toggle('active', isEv);
   if (isCl) {
     renderClients();
     renderClientCalendar();
@@ -1294,6 +1401,7 @@ function showScreen(name) {
     if (di && !di.value) di.value = todayStr();
   }
   if (isEst) renderEstudos();
+  if (isEv) { renderEvCalendar(); renderEvList(); }
 }
 
 function todayStr() { return new Date().toISOString().split('T')[0]; }
@@ -1881,6 +1989,7 @@ async function doLogout() {
 }
 
 async function onAuthLogin(user) {
+  window._userId = user.id;
   window._userPrefix = user.id.replace(/-/g,'').substring(0, 12);
   const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
   document.getElementById('user-name-display').textContent = name;
@@ -1896,7 +2005,156 @@ async function onAuthLogin(user) {
   document.getElementById('auth-overlay').style.display = 'none';
   document.getElementById('paywall-overlay').style.display = 'none';
   loadKanban(); loadClients(); checkClientRepeat(); loadEstudos(); load(); render();
+  // Define data padrão no form de eventos
+  const evDateInput = document.getElementById('ev-date');
+  if (evDateInput) evDateInput.value = todayStr();
+  renderEvCalendar();
+  await loadEvents();
 }
+
+// ── EVENTOS ──────────────────────────────────────────────────────────
+let events = [];
+let evCalYear = new Date().getFullYear();
+let evCalMonth = new Date().getMonth();
+
+async function loadEvents() {
+  if (!window._userId) return;
+  const { data, error } = await sb.from('events').select('*').eq('user_id', window._userId).order('date').order('time');
+  if (!error) events = data || [];
+  checkAutoTaskFromEvents();
+  updateReminderWidget();
+}
+
+async function addEvent() {
+  const name  = document.getElementById('ev-name').value.trim();
+  const date  = document.getElementById('ev-date').value;
+  const time  = document.getElementById('ev-time').value || null;
+  const theme = document.getElementById('ev-theme').value.trim() || null;
+  if (!name) { showToast('Digite o nome do evento.'); return; }
+  if (!date) { showToast('Selecione a data.'); return; }
+  const { data, error } = await sb.from('events').insert({ user_id: window._userId, name, date, time, theme }).select().single();
+  if (error) { showToast('Erro ao salvar: ' + error.message); return; }
+  events.push(data);
+  events.sort((a,b) => a.date.localeCompare(b.date) || (a.time||'').localeCompare(b.time||''));
+  document.getElementById('ev-name').value = '';
+  document.getElementById('ev-time').value = '';
+  document.getElementById('ev-theme').value = '';
+  showToast('✅ Compromisso adicionado!');
+  checkAutoTaskFromEvents();
+  updateReminderWidget();
+  renderEvCalendar();
+  renderEvList();
+}
+
+async function deleteEvent(id) {
+  await sb.from('events').delete().eq('id', id);
+  events = events.filter(e => e.id !== id);
+  updateReminderWidget();
+  renderEvCalendar();
+  renderEvList();
+  showToast('🗑 Evento removido.');
+}
+
+function checkAutoTaskFromEvents() {
+  const today = todayStr();
+  const todayEvents = events.filter(e => e.date === today);
+  todayEvents.forEach(ev => {
+    const alreadyExists = tasks.some(t => t._eventId === ev.id);
+    if (!alreadyExists) {
+      const timeStr = ev.time ? ` às ${ev.time.substring(0,5)}` : '';
+      tasks.push({ id: idCtr++, _eventId: ev.id, title: `📅 ${ev.name}${timeStr}`, category: '📅 Agenda', quadrant: 1, done: false });
+      save();
+    }
+  });
+  if (todayEvents.length) render();
+}
+
+function updateReminderWidget() {
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+  const next = events.find(e => e.date >= tomorrowStr);
+  const el = document.getElementById('rem-text');
+  if (!el) return;
+  if (!next) { el.textContent = 'sem eventos'; return; }
+  const d = new Date(next.date + 'T12:00:00');
+  const label = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
+  const timeStr = next.time ? ` ${next.time.substring(0,5)}` : '';
+  el.textContent = `${label}${timeStr} · ${next.name}`;
+}
+
+function evNavMonth(dir) {
+  evCalMonth += dir;
+  if (evCalMonth > 11) { evCalMonth = 0; evCalYear++; }
+  if (evCalMonth < 0)  { evCalMonth = 11; evCalYear--; }
+  renderEvCalendar();
+}
+
+function renderEvCalendar() {
+  const title = new Date(evCalYear, evCalMonth, 1).toLocaleDateString('pt-BR', { month:'long', year:'numeric' });
+  document.getElementById('ev-cal-title').textContent = title;
+  const grid = document.getElementById('ev-cal-days');
+  grid.innerHTML = '';
+  const today = todayStr();
+  const firstDay = new Date(evCalYear, evCalMonth, 1).getDay();
+  const daysInMonth = new Date(evCalYear, evCalMonth + 1, 0).getDate();
+  const daysInPrev = new Date(evCalYear, evCalMonth, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    const d = daysInPrev - firstDay + 1 + i;
+    const cell = document.createElement('div');
+    cell.className = 'ev-cal-day other-month';
+    cell.innerHTML = `<div class="ev-cal-day-num">${d}</div>`;
+    grid.appendChild(cell);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${evCalYear}-${String(evCalMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayEvents = events.filter(e => e.date === dateStr);
+    const cell = document.createElement('div');
+    let cls = 'ev-cal-day';
+    if (dateStr === today) cls += ' today';
+    if (dayEvents.length) cls += ' has-event';
+    cell.className = cls;
+    let dotsHtml = dayEvents.length ? `<div class="ev-dots">${dayEvents.map(()=>'<div class="ev-dot"></div>').join('')}</div>` : '';
+    let tooltipHtml = '';
+    if (dayEvents.length) {
+      const lines = dayEvents.map(e => {
+        const t = e.time ? e.time.substring(0,5) + ' — ' : '';
+        return t + e.name + (e.theme ? `\n  📌 ${e.theme}` : '');
+      }).join('\n\n');
+      tooltipHtml = `<div class="ev-tooltip">${lines}</div>`;
+    }
+    cell.innerHTML = `<div class="ev-cal-day-num">${d}</div>${dotsHtml}${tooltipHtml}`;
+    grid.appendChild(cell);
+  }
+
+  const remaining = (7 - ((firstDay + daysInMonth) % 7)) % 7;
+  for (let i = 1; i <= remaining; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'ev-cal-day other-month';
+    cell.innerHTML = `<div class="ev-cal-day-num">${i}</div>`;
+    grid.appendChild(cell);
+  }
+}
+
+function renderEvList() {
+  const list = document.getElementById('ev-list');
+  const today = todayStr();
+  const upcoming = events.filter(e => e.date >= today).slice(0, 15);
+  if (!upcoming.length) { list.innerHTML = '<div style="color:var(--mu);font-size:13px;padding:8px 0">Nenhum compromisso próximo.</div>'; return; }
+  list.innerHTML = upcoming.map(e => {
+    const d = new Date(e.date + 'T12:00:00');
+    const label = d.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
+    const timeStr = e.time ? ` · ${e.time.substring(0,5)}` : '';
+    const themeStr = e.theme ? `<div class="ev-item-meta">📌 ${e.theme}</div>` : '';
+    return `<div class="ev-item">
+      <div><div class="ev-item-name">${e.name}</div><div class="ev-item-meta">${label}${timeStr}</div>${themeStr}</div>
+      <button class="ev-item-del" onclick="deleteEvent('${e.id}')" title="Remover">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+// ── FIM EVENTOS ───────────────────────────────────────────────────────
 
 async function initAuth() {
   // Escuta eventos de auth — captura PASSWORD_RECOVERY e SIGNED_IN corretamente
