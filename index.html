@@ -786,8 +786,12 @@ select,textarea,button{font-family:inherit}
           <input type="text" id="ev-name" placeholder="Ex: Workshop da Nanda"/>
         </div>
         <div class="ev-field">
-          <label>Data</label>
+          <label>De (início)</label>
           <input type="date" id="ev-date"/>
+        </div>
+        <div class="ev-field">
+          <label>Até (fim) <span style="color:var(--mu);font-size:10px">(opcional)</span></label>
+          <input type="date" id="ev-end-date"/>
         </div>
         <div class="ev-field">
           <label>Horário</label>
@@ -2026,17 +2030,20 @@ async function loadEvents() {
 }
 
 async function addEvent() {
-  const name  = document.getElementById('ev-name').value.trim();
-  const date  = document.getElementById('ev-date').value;
-  const time  = document.getElementById('ev-time').value || null;
-  const theme = document.getElementById('ev-theme').value.trim() || null;
+  const name     = document.getElementById('ev-name').value.trim();
+  const date     = document.getElementById('ev-date').value;
+  const end_date = document.getElementById('ev-end-date').value || null;
+  const time     = document.getElementById('ev-time').value || null;
+  const theme    = document.getElementById('ev-theme').value.trim() || null;
   if (!name) { showToast('Digite o nome do evento.'); return; }
-  if (!date) { showToast('Selecione a data.'); return; }
-  const { data, error } = await sb.from('events').insert({ user_id: window._userId, name, date, time, theme }).select().single();
+  if (!date) { showToast('Selecione a data de início.'); return; }
+  if (end_date && end_date < date) { showToast('A data de fim deve ser após a de início.'); return; }
+  const { data, error } = await sb.from('events').insert({ user_id: window._userId, name, date, end_date, time, theme }).select().single();
   if (error) { showToast('Erro ao salvar: ' + error.message); return; }
   events.push(data);
   events.sort((a,b) => a.date.localeCompare(b.date) || (a.time||'').localeCompare(b.time||''));
   document.getElementById('ev-name').value = '';
+  document.getElementById('ev-end-date').value = '';
   document.getElementById('ev-time').value = '';
   document.getElementById('ev-theme').value = '';
   showToast('✅ Compromisso adicionado!');
@@ -2057,12 +2064,13 @@ async function deleteEvent(id) {
 
 function checkAutoTaskFromEvents() {
   const today = todayStr();
-  const todayEvents = events.filter(e => e.date === today);
+  const todayEvents = events.filter(e => e.date <= today && (e.end_date ? e.end_date >= today : e.date === today));
   todayEvents.forEach(ev => {
     const alreadyExists = tasks.some(t => t._eventId === ev.id);
     if (!alreadyExists) {
       const timeStr = ev.time ? ` às ${ev.time.substring(0,5)}` : '';
-      tasks.push({ id: idCtr++, _eventId: ev.id, title: `📅 ${ev.name}${timeStr}`, category: '📅 Agenda', quadrant: 1, done: false });
+      const rangeStr = ev.end_date ? ` (até ${new Date(ev.end_date+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})})` : '';
+      tasks.push({ id: idCtr++, _eventId: ev.id, title: `📅 ${ev.name}${timeStr}${rangeStr}`, category: '📅 Agenda', quadrant: 1, done: false });
       save();
     }
   });
@@ -2109,7 +2117,7 @@ function renderEvCalendar() {
 
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${evCalYear}-${String(evCalMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dayEvents = events.filter(e => e.date === dateStr);
+    const dayEvents = events.filter(e => e.date <= dateStr && (e.end_date ? e.end_date >= dateStr : e.date === dateStr));
     const cell = document.createElement('div');
     let cls = 'ev-cal-day';
     if (dateStr === today) cls += ' today';
@@ -2144,7 +2152,9 @@ function renderEvList() {
   if (!upcoming.length) { list.innerHTML = '<div style="color:var(--mu);font-size:13px;padding:8px 0">Nenhum compromisso próximo.</div>'; return; }
   list.innerHTML = upcoming.map(e => {
     const d = new Date(e.date + 'T12:00:00');
-    const label = d.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
+    const dStart = d.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
+    const dEnd = e.end_date ? ` → ${new Date(e.end_date+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}` : '';
+    const label = dStart + dEnd;
     const timeStr = e.time ? ` · ${e.time.substring(0,5)}` : '';
     const themeStr = e.theme ? `<div class="ev-item-meta">📌 ${e.theme}</div>` : '';
     return `<div class="ev-item">
