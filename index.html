@@ -35,11 +35,11 @@ select,textarea,button{font-family:inherit}
   color:var(--cream,#faf7f2);white-space:nowrap;font-style:italic;letter-spacing:-0.3px}
 .hdr-mid{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}
 #clock{font-family:'Playfair Display',serif;font-size:19px;font-weight:600;color:#faf7f2;letter-spacing:2px}
-#date-str{font-size:10px;color:#a8c5ae}
+#date-str{font-size:18px;color:#ffd4b8;font-weight:700;letter-spacing:.5px}
 .sess-badge{background:var(--s2);border:1px solid var(--bd);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--mu);white-space:nowrap}
 .sess-badge b{color:var(--a3)}
-#pomo-w{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);
-  border-radius:14px;padding:8px 16px;cursor:pointer;transition:border-color .2s,box-shadow .2s;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+#pomo-w{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,212,184,.4);
+  border-radius:14px;padding:8px 16px;cursor:pointer;transition:border-color .2s,box-shadow .2s;flex-shrink:0;box-shadow:0 0 18px rgba(255,180,130,.35),0 2px 12px rgba(0,0,0,.15)}
 #pomo-w:hover{border-color:var(--a)}
 .pw-label{font-size:9px;color:#a8c5ae;text-transform:uppercase;letter-spacing:1px}
 #pw-time{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;min-width:60px}
@@ -529,7 +529,7 @@ select,textarea,button{font-family:inherit}
     <div id="pomo-w" onclick="openPomo()">
       <div>
         <div class="pw-label" id="pw-label">🍅 Foco</div>
-        <div id="pw-time" style="color:#faf7f2">25:00</div>
+        <div id="pw-time" style="color:#ffd4b8;text-shadow:0 0 12px rgba(255,180,130,.6)">25:00</div>
         <div id="pw-task"></div>
       </div>
       <button class="pbtn go" id="pw-btn" onclick="event.stopPropagation();togglePomo()">▶</button>
