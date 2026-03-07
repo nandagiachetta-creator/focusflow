@@ -444,22 +444,47 @@ select,textarea,button{font-family:inherit}
   /* Botão de mover kanban sempre visível no mobile */
   .kcard-move{opacity:.7!important}
   .kcard-del{opacity:.7!important}
+  /* Eventos — formulário de data em coluna */
+  .ev-date-row{flex-direction:column!important;align-items:stretch!important}
+  .ev-date-row>div{flex:none!important;width:100%!important}
+  /* Células do calendário menores */
+  .ev-cal-day{min-height:42px;padding:4px}
+  .ev-cal-day-num{font-size:11px}
+  /* Form de eventos com padding bottom p/ nav fixa */
+  #eventos-screen{padding-bottom:80px}
 }
 @media (max-width: 480px) {
   #hdr{padding:0 8px;gap:4px}
   .hdr-mid{gap:3px}
-  #clock{font-size:16px!important;letter-spacing:1px}
-  .logo{font-size:16px}
+  /* Clock e data menores para caber no header */
+  #clock{font-size:13px!important;letter-spacing:0}
+  #date-str{font-size:12px!important;letter-spacing:0;font-weight:600}
+  .logo{font-size:14px}
+  /* Esconde widget de lembrete no header — agenda ainda acessível pela nav */
+  #reminder-widget{display:none}
   #pomo-w{padding:4px 8px;gap:4px}
-  #pw-time{font-size:20px!important;min-width:46px}
+  #pw-time{font-size:18px!important;min-width:42px}
   /* Matriz coluna única */
   #matrix{grid-template-columns:1fr}
   .quad{min-height:100px;padding:10px}
   #kanban-board,#est-kanban-board{grid-template-columns:1fr}
   /* Auth compacto */
-  .auth-card{padding:24px 18px}
+  .auth-card{padding:24px 16px}
   .auth-logo-big{font-size:20px}
   .auth-tagline{margin-bottom:18px}
+  /* Formulário eventos: campos de data empilhados */
+  .ev-date-row{flex-direction:column!important;align-items:stretch!important}
+  .ev-date-row>div{flex:none!important;width:100%!important}
+  /* Calendário mais compacto */
+  .ev-cal-day{min-height:36px;padding:3px}
+  .ev-cal-day-num{font-size:10px}
+  .ev-dot{width:5px;height:5px}
+  .ev-cal-dow{font-size:9px;padding:2px 0}
+  /* Fontes dos campos de evento no form */
+  .ev-field input{font-size:16px;padding:10px 12px}
+  .ev-form-card{padding:14px}
+  .ev-form-card h3{font-size:15px}
+  .ev-add-btn{font-size:14px;padding:12px}
 }
 
 /* AUTH */
@@ -785,7 +810,7 @@ select,textarea,button{font-family:inherit}
           <label>Nome do evento</label>
           <input type="text" id="ev-name" placeholder="Ex: Workshop da Nanda"/>
         </div>
-        <div class="ev-field full" style="display:flex;flex-direction:row;gap:8px;align-items:flex-end">
+        <div class="ev-field full ev-date-row" style="display:flex;flex-direction:row;gap:8px;align-items:flex-end">
           <div style="display:flex;flex-direction:column;gap:5px;flex:1">
             <label style="font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:1px;font-weight:600">De</label>
             <input type="date" id="ev-date" style="background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;color:var(--tx);font-size:13px;font-family:inherit;outline:none"/>
