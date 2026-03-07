@@ -2189,10 +2189,18 @@ async function initAuth() {
     }
   });
 
+  // Se a URL tem type=recovery, espera o evento PASSWORD_RECOVERY (não faz login direto)
+  const hashParams = new URLSearchParams(window.location.hash.replace('#', ''));
+  const isRecovery = hashParams.get('type') === 'recovery';
+
   // Verifica sessão existente ao carregar
   const { data: { session } } = await sb.auth.getSession();
   if (session?.user) {
-    if (session.user.user_metadata?.must_change_password) {
+    if (isRecovery) {
+      // Link de redefinição: mostra tela de nova senha
+      document.getElementById('setpass-tagline').textContent = 'Redefina sua senha';
+      showAuthView('set-password');
+    } else if (session.user.user_metadata?.must_change_password) {
       document.getElementById('setpass-tagline').textContent = 'Primeiro acesso — defina sua senha';
       showAuthView('set-password');
     } else {
