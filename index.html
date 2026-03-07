@@ -124,22 +124,24 @@ select,textarea,button{font-family:inherit}
 .info-popup strong{color:var(--a3);font-family:'Playfair Display',serif;font-size:15px;}
 
 /* DRAG ITEMS */
-.qi{background:rgba(255,255,255,.07);border-radius:8px;padding:6px 8px;
-  display:flex;align-items:center;gap:6px;
-  transition:background .15s,opacity .2s;
+.qi{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;
+  display:flex;align-items:center;gap:8px;
+  transition:background .15s,opacity .2s,border-color .2s;
   cursor:grab;user-select:none}
-.qi:hover{background:rgba(255,255,255,.13)}
+.qi:hover{background:var(--s2);border-color:var(--bd2)}
 .qi:active{cursor:grabbing}
 .qi.dragging{opacity:.25}
-.qi.done{opacity:.35}.qi.done .qi-title{text-decoration:line-through}
-.qi-grip{font-size:12px;color:var(--mu2);flex-shrink:0;opacity:.5;line-height:1}
+.qi.done{opacity:.45}.qi.done .qi-title{text-decoration:line-through;color:var(--mu)}
+.qi-grip{font-size:12px;color:var(--mu2);flex-shrink:0;opacity:.4;line-height:1}
 .qi-ico{font-size:13px;flex-shrink:0}
-.qi-title{font-size:11px;flex:1;line-height:1.4}
+.qi-title{font-size:12px;flex:1;line-height:1.4;color:var(--tx)}
 .qi-pomo{font-size:10px;opacity:0;transition:opacity .2s}
 .qi:hover .qi-pomo{opacity:.65}
-.qi-ck{width:14px;height:14px;border-radius:4px;border:1.5px solid rgba(255,255,255,.18);background:none;cursor:pointer;
-  flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s}
-.qi-ck.on{background:var(--a3);border-color:var(--a3);color:#000}
+.qi-ck{width:20px;height:20px;border-radius:5px;border:2px solid var(--bd2);background:var(--s2);cursor:pointer;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  transition:all .18s;color:transparent}
+.qi-ck:hover{border-color:var(--a);background:rgba(107,143,113,.12)}
+.qi-ck.on{background:var(--a);border-color:var(--a);color:#fff}
 
 /* DEV / IDEAS */
 .dev-sec{background:linear-gradient(135deg,rgba(92,240,200,.07),rgba(124,92,252,.06));
@@ -440,7 +442,7 @@ select,textarea,button{font-family:inherit}
   #kanban-board,#est-kanban-board{grid-template-columns:repeat(2,1fr)}
   /* Tap targets maiores */
   .ibtn{padding:7px;font-size:16px}
-  .qi-ck{width:22px;height:22px;font-size:12px}
+  .qi-ck{width:26px;height:26px;font-size:14px;border-radius:7px}
   /* Botão de mover kanban sempre visível no mobile */
   .kcard-move{opacity:.7!important}
   .kcard-del{opacity:.7!important}
