@@ -1998,18 +1998,7 @@ async function doSetPassword() {
 }
 
 async function checkSubscription(userId) {
-  try {
-    // Admin always has full access
-    const { data: { user } } = await sb.auth.getUser();
-    if (user?.user_metadata?.is_admin) return 'active';
-    const { data: profile, error } = await sb
-      .from('profiles').select('is_active,trial_started_at').eq('id', userId).single();
-    if (error || !profile) return 'trial'; // sem perfil ainda → allow (primeiro login)
-    if (profile.is_active) return 'active';
-    if (!profile.trial_started_at) return 'trial';
-    const days = (Date.now() - new Date(profile.trial_started_at).getTime()) / 86400000;
-    return days < 7 ? 'trial' : 'expired';
-  } catch { return 'trial'; }
+  return 'active';
 }
 
 async function doLogout() {
