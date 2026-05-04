@@ -618,6 +618,7 @@ select,textarea,button{font-family:inherit}
     <button id="notif-btn" onclick="requestNotifPermission()" title="Ativar notificações de horário"
       style="background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:5px 11px;
       cursor:pointer;font-size:15px;transition:border-color .2s,opacity .2s;opacity:.5;flex-shrink:0">🔕</button>
+    <button onclick="doReset()" title="Zerar app" style="background:none;border:1px solid rgba(193,127,62,.35);border-radius:10px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--a2);opacity:.7;flex-shrink:0;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity='.7'">🗑️</button>
     <div id="user-btn" onclick="doLogout()" title="Sair">
       <span>👤</span>
       <span id="user-name-display"></span>
@@ -2009,6 +2010,20 @@ async function doLogout() {
   tasks = []; kanban = {}; clients = []; estudos = []; estKanban = {};
   document.getElementById('paywall-overlay').style.display = 'none';
   showAuthView('login');
+}
+
+async function doReset() {
+  const ok = confirm('⚠️ Zerar o app?\n\nTodas as tarefas, clientes, estudos e eventos serão apagados para sempre.\n\nEssa ação não pode ser desfeita.');
+  if (!ok) return;
+  localStorage.removeItem(_key(LS_KEY));
+  localStorage.removeItem(_key(KB_KEY));
+  localStorage.removeItem(_key(CL_KEY));
+  localStorage.removeItem(_key(EST_KEY));
+  if (window._userId) await sb.from('events').delete().eq('user_id', window._userId);
+  tasks = []; kanban = {}; clients = []; estudos = []; estKanban = {}; events = [];
+  idCtr = Date.now(); clIdCtr = Date.now()+1000000; estIdCtr = Date.now()+2000000;
+  render(); renderKanban(); renderClients(); renderEstudos(); renderEvCalendar(); updateReminderWidget();
+  showToast('App zerado com sucesso.');
 }
 
 async function onAuthLogin(user) {
