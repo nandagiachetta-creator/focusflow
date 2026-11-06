@@ -1009,6 +1009,7 @@ function classify(text){
 //  SUGESTÃO
 // ═══════════════════════
 function buildSuggestion(){
+  return null; // caixa de sugestão removida a pedido
   const active=tasks.filter(t=>!t.done);
   if(!active.length) return null;
   const q1=active.filter(t=>t.quadrant===1);
