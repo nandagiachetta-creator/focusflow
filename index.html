@@ -1009,18 +1009,24 @@ function classify(text){
 //  SUGESTÃO
 // ═══════════════════════
 function buildSuggestion(){
-  return null; // caixa de sugestão removida a pedido
-  const active=tasks.filter(t=>!t.done);
-  if(!active.length) return null;
-  const q1=active.filter(t=>t.quadrant===1);
-  const q2=active.filter(t=>t.quadrant===2);
-  const q3=active.filter(t=>t.quadrant===3);
-  const dev=active.find(t=>['📚 Estudos','🌱 Dev Pessoal'].includes(t.category));
-  if(q1.length>0) return`🔥 <b>Eat the Frog:</b> Comece por <b>"${q1[0].title}"</b> — urgente E importante. Eliminar a maior pressão primeiro libera dopamina e cria momentum para o dia.`;
-  if(dev&&q2.some(t=>t.id===dev.id)) return`🧠 <b>Deep Work:</b> Sem urgências agora! Iniciar com <b>"${dev.title}"</b> ativa o estado de fluxo e melhora o foco para as próximas tarefas.`;
-  if(q2.length>0) return`✨ <b>Momentum:</b> Inicie com <b>"${q2[0].title}"</b>. Um Pomodoro de 25 min rende mais que 2h dispersas.`;
-  if(q3.length>0) return`⚡ <b>Quick Wins:</b> Foque em <b>"${q3[0].title}"</b>. Sprints curtos com pausa evitam o colapso de energia.`;
-  return`✅ <b>Flow State:</b> Tudo organizado! Aproveite para estudar — são os juros compostos da sua evolução. 🚀`;
+  const total=tasks.length;
+  if(!total) return null;
+  const done=tasks.filter(t=>t.done).length;
+  const left=total-done;
+  const day=Math.floor(Date.now()/86400000);
+  const pick=a=>a[day%a.length];
+  if(!left) return pick([
+    '🎉 <b>Dia concluído!</b> Você fez o que se propôs a fazer. Descanse com a consciência tranquila.',
+    '🌟 <b>Tudo feito!</b> Cada tarefa concluída é uma promessa que você cumpriu consigo mesma.'
+  ]);
+  if(!done) return pick([
+    '💛 <b>Um passo de cada vez.</b> Escolha uma tarefa só e comece por ela — o resto vem em seguida.',
+    '🌱 <b>Começar é a parte mais difícil.</b> Faça só 5 minutos da primeira tarefa. O ritmo vem depois.',
+    '✨ <b>Você não precisa fazer tudo hoje,</b> só o que importa. Comece pelo que pesa mais.'
+  ]);
+  if(left===1) return '🏁 <b>Falta só uma!</b> Você já chegou até aqui — termine com calma e feche o dia.';
+  if(done/total>=0.5) return `🔥 <b>Mais da metade feita!</b> Faltam só ${left}. Você está no ritmo certo, continue.`;
+  return `💪 <b>${done} concluída${done>1?'s':''}!</b> Já existe movimento — falta${left>1?'m':''} ${left}. Mais um passo e o dia vira a seu favor.`;
 }
 
 // ═══════════════════════
