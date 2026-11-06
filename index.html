@@ -198,6 +198,20 @@ select,textarea,button{font-family:inherit}
   transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;white-space:nowrap}
 #toast.on{transform:translateX(-50%) translateY(0);opacity:1}
 
+/* EDIT MODAL + LINKS */
+#edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+#edit-overlay.open{display:flex}
+#edit-modal{background:var(--s1);border:1px solid var(--bd2);border-radius:16px;padding:22px;width:100%;max-width:440px;max-height:90vh;overflow:auto;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+#edit-modal h3{margin:0 0 14px;font-size:17px;color:var(--tx)}
+#edit-modal label{display:block;font-size:12px;color:var(--mu);margin:10px 0 4px}
+#edit-modal input,#edit-modal textarea{width:100%;box-sizing:border-box;background:var(--bg);border:1px solid var(--bd2);border-radius:8px;padding:9px 11px;font:inherit;font-size:15px;color:var(--tx)}
+#edit-modal textarea{min-height:90px;resize:vertical}
+.edit-acts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.edit-acts button{border:1px solid var(--bd2);background:var(--s2);color:var(--tx);border-radius:8px;padding:8px 16px;cursor:pointer;font:inherit;font-size:14px}
+.edit-acts button.pri{background:#2a2a2a;color:#faf7f2;border-color:#2a2a2a}
+.kcard-edit{background:none;border:none;cursor:pointer;font-size:14px;color:var(--mu);opacity:0;transition:opacity .2s;padding:2px 4px;border-radius:5px;flex-shrink:0}
+.kcard:hover .kcard-edit{opacity:.6}.kcard-edit:hover{opacity:1!important}
+a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointer}
 /* POMO MODAL */
 #pomo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;
   align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s}
@@ -446,6 +460,7 @@ select,textarea,button{font-family:inherit}
   .qi-ck{width:26px;height:26px;font-size:14px;border-radius:7px}
   /* Botão de mover kanban sempre visível no mobile */
   .kcard-move{opacity:.7!important}
+  .kcard-edit{opacity:.7!important}
   .kcard-del{opacity:.7!important}
   /* Eventos — formulário de data em coluna */
   .ev-date-row{flex-direction:column!important;align-items:stretch!important}
@@ -882,6 +897,14 @@ select,textarea,button{font-family:inherit}
 
 <div id="toast"></div>
 
+<div id="edit-overlay" onclick="closeEdit()">
+  <div id="edit-modal" onclick="event.stopPropagation()">
+    <h3 id="edit-title">Editar</h3>
+    <div id="edit-fields"></div>
+    <div class="edit-acts"><button onclick="closeEdit()">Cancelar</button><button class="pri" onclick="saveEdit()">Salvar</button></div>
+  </div>
+</div>
+
 <div id="pomo-overlay" onclick="closePomo()">
   <div id="pomo-modal" onclick="event.stopPropagation()">
     <button id="pm-close" onclick="closePomo()">×</button>
@@ -1012,10 +1035,11 @@ function render(){
     const el=document.createElement('div');
     el.className='tcard'+(t.done?' done':'');
     el.innerHTML=`<span class="t-ico">${t.emoji}</span>
-      <div class="t-body"><div class="t-title">${esc(t.title)}</div>
+      <div class="t-body"><div class="t-title">${rich(t.title)}</div>
         <div class="t-meta"><span class="ctag">${esc(t.category)}</span>
           <span class="qtag q${t.quadrant}t">${['','Q1 🔥','Q2 ⭐','Q3 ⚡','Q4 🗑'][t.quadrant]}</span></div></div>
       <div class="t-acts">
+        <button class="ibtn" title="Editar" onclick="editTask(${t.id})">✎</button>
         <button class="ibtn" onclick="startPomoTask(${t.id})">🍅</button>
         <button class="ibtn" title="Mover para..." onclick="event.stopPropagation();openMoveMenu(${t.id},this)">↕</button>
         <button class="ibtn" onclick="toggleDone(${t.id})">${t.done?'↩':'✓'}</button>
@@ -1036,13 +1060,14 @@ function render(){
       el.dataset.id=t.id;
       el.innerHTML=`<span class="qi-grip">⠿</span>
         <span class="qi-ico">${t.emoji}</span>
-        <span class="qi-title">${esc(t.title)}</span>
+        <span class="qi-title">${rich(t.title)}</span>
+        <button class="ibtn qi-edit" onclick="event.stopPropagation();editTask(${t.id})" title="Editar" style="font-size:12px">✎</button>
         <button class="ibtn qi-move" onclick="event.stopPropagation();openMoveMenu(${t.id},this)" title="Mover para..." style="opacity:0;font-size:12px;transition:opacity .2s">↕</button>
         <span class="qi-pomo">🍅</span>
         <button class="qi-ck${t.done?' on':''}" onclick="event.stopPropagation();toggleDone(${t.id})">${t.done?'✓':''}</button>`;
       el.addEventListener('mouseenter',()=>el.querySelector('.qi-move').style.opacity='0.6');
       el.addEventListener('mouseleave',()=>el.querySelector('.qi-move').style.opacity='0');
-      el.addEventListener('click',e=>{ if(!e.target.classList.contains('qi-ck')&&!e.target.classList.contains('qi-move')) startPomoTask(t.id); });
+      el.addEventListener('click',e=>{ if(!e.target.classList.contains('qi-ck')&&!e.target.classList.contains('qi-move')&&!e.target.classList.contains('qi-edit')) startPomoTask(t.id); });
       el.addEventListener('dragstart',onDragStart);
       el.addEventListener('dragend',onDragEnd);
       c.appendChild(el);
@@ -1059,7 +1084,7 @@ function render(){
   document.getElementById('ideas-sec').style.display=ideas.length?'block':'none';
   if(ideas.length){
     const w=document.getElementById('ideas-wrap');w.innerHTML='';
-    ideas.forEach(t=>{const el=document.createElement('div');el.className='sticky';el.textContent=t.title;w.appendChild(el);});
+    ideas.forEach(t=>{const el=document.createElement('div');el.className='sticky';el.innerHTML=rich(t.title);w.appendChild(el);});
   }
 
   // Suggestion
@@ -1081,6 +1106,35 @@ function render(){
   renderClientTasks();
 }
 
+function rich(s){
+  return esc(s).replace(/(https?:\/\/|www\.)(?:(?!&quot;|&lt;|&gt;)\S)+/g,m=>{
+    let tail='';const t=m.match(/[.,;:!?)\]]+$/);if(t){tail=t[0];m=m.slice(0,-tail.length);}
+    const href=m.startsWith('www.')?'https://'+m:m;
+    return `<a class="lnk" href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" draggable="false">${m}</a>${tail}`;
+  });
+}
+let _editCb=null;
+function openEdit(title,fields,cb){
+  _editCb=cb;
+  document.getElementById('edit-title').textContent=title;
+  document.getElementById('edit-fields').innerHTML=fields.map((f,i)=>`<label for="ef-${i}">${f.label}</label>`+
+    (f.multiline?`<textarea id="ef-${i}">${esc(f.value||'')}</textarea>`:`<input id="ef-${i}" type="${f.type||'text'}" value="${esc(f.value||'')}">`)).join('');
+  document.getElementById('edit-overlay').classList.add('open');
+  const f=document.getElementById('ef-0');if(f)setTimeout(()=>f.focus(),50);
+}
+function closeEdit(){document.getElementById('edit-overlay').classList.remove('open');_editCb=null;}
+function saveEdit(){
+  const vals=[...document.querySelectorAll('#edit-fields input,#edit-fields textarea')].map(x=>x.value.trim());
+  const cb=_editCb;closeEdit();if(cb)cb(vals);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeEdit();});
+function editTask(id){
+  const t=tasks.find(t=>t.id===id);if(!t)return;
+  openEdit('✎ Editar tarefa',[{label:'Texto da tarefa (links http:// viram clicáveis)',value:t.title,multiline:true}],v=>{
+    if(!v[0]){showToast('⚠️ O texto não pode ficar vazio.');return;}
+    t.title=v[0];render();showToast('✅ Tarefa atualizada!');
+  });
+}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 // ═══════════════════════
@@ -1611,7 +1665,7 @@ function renderClientTasks() {
       <div class="cltask-body">
         <div class="cltask-name">${esc(c.nome)}</div>
         ${c.tipo ? `<div class="cltask-service">${esc(c.tipo)}</div>` : ''}
-        ${c.desc ? `<div class="cltask-desc">${esc(c.desc)}</div>` : ''}
+        ${c.desc ? `<div class="cltask-desc">${rich(c.desc)}</div>` : ''}
       </div>
     </div>`).join('');
   document.getElementById('bklog').appendChild(section);
@@ -1653,7 +1707,7 @@ function renderKanban(devTasks) {
       el.className = 'kcard' + (col === 'feito' ? ' kb-done' : '');
       el.draggable = true;
       el.dataset.id = t.id;
-      el.innerHTML = `<span class="kcard-ico">${t.emoji}</span><span class="kcard-title">${esc(t.title)}</span><button class="kcard-move" onclick="event.stopPropagation();openKbMoveMenu(${t.id},this)" title="Mover coluna">↔</button><span class="kcard-pomo" onclick="event.stopPropagation();startPomoTask(${t.id})" title="Iniciar Pomodoro">🍅</span>`;
+      el.innerHTML = `<span class="kcard-ico">${t.emoji}</span><span class="kcard-title">${rich(t.title)}</span><button class="kcard-edit" onclick="event.stopPropagation();editTask(${t.id})" title="Editar">✎</button><button class="kcard-move" onclick="event.stopPropagation();openKbMoveMenu(${t.id},this)" title="Mover coluna">↔</button><span class="kcard-pomo" onclick="event.stopPropagation();startPomoTask(${t.id})" title="Iniciar Pomodoro">🍅</span>`;
 
       el.addEventListener('dragstart', e => {
         kbDragId = t.id;
@@ -1717,6 +1771,19 @@ function addEstudo() {
   showToast('📚 Adicionado ao BackLog!');
 }
 
+function editEstudo(id) {
+  const e = estudos.find(x => x.id === id); if (!e) return;
+  openEdit('✎ Editar curso/estudo', [
+    {label:'Nome do curso', value:e.nome},
+    {label:'Plataforma / link (http:// vira clicável)', value:e.plat||''},
+    {label:'Anotações (links viram clicáveis)', value:e.nota||'', multiline:true}
+  ], v => {
+    if (!v[0]) { showToast('⚠️ O nome não pode ficar vazio.'); return; }
+    e.nome = v[0]; e.plat = v[1]; e.nota = v[2];
+    saveEstudos(); renderEstudos(); showToast('✅ Curso atualizado!');
+  });
+}
+
 function deleteEstudo(id) {
   estudos = estudos.filter(e => e.id !== id);
   delete estKanban[id];
@@ -1743,10 +1810,11 @@ function renderEstudos() {
       el.innerHTML = `
         <span class="kcard-ico">📚</span>
         <div class="kcard-body">
-          <div class="kcard-title">${esc(e.nome)}</div>
-          ${e.plat ? `<div style="font-size:13px;color:var(--mu);margin-top:2px">${esc(e.plat)}</div>` : ''}
-          ${e.nota ? `<div style="font-size:13px;color:var(--mu2);margin-top:3px;line-height:1.4">${esc(e.nota)}</div>` : ''}
+          <div class="kcard-title">${rich(e.nome)}</div>
+          ${e.plat ? `<div style="font-size:13px;color:var(--mu);margin-top:2px">${rich(e.plat)}</div>` : ''}
+          ${e.nota ? `<div style="font-size:13px;color:var(--mu2);margin-top:3px;line-height:1.4;white-space:pre-line">${rich(e.nota)}</div>` : ''}
         </div>
+        <button class="kcard-edit" onclick="event.stopPropagation();editEstudo(${e.id})" title="Editar">✎</button>
         <button class="kcard-move" onclick="event.stopPropagation();openEstMoveMenu(${e.id},this)" title="Mover coluna">↔</button>
         <button class="kcard-del" onclick="event.stopPropagation();deleteEstudo(${e.id})">✕</button>`;
       el.addEventListener('dragstart', ev => {
@@ -2087,6 +2155,34 @@ async function addEvent() {
   renderEvList();
 }
 
+function editEvent(id) {
+  const ev = events.find(e => String(e.id) === String(id)); if (!ev) return;
+  openEdit('✎ Editar compromisso', [
+    {label:'Nome', value:ev.name},
+    {label:'Data de início', value:ev.date, type:'date'},
+    {label:'Data de fim (opcional)', value:ev.end_date||'', type:'date'},
+    {label:'Horário (opcional)', value:ev.time?ev.time.substring(0,5):'', type:'time'},
+    {label:'Tema / link (http:// vira clicável)', value:ev.theme||'', multiline:true}
+  ], async v => {
+    if (!v[0]) { showToast('⚠️ Digite o nome.'); return; }
+    if (!v[1]) { showToast('⚠️ Selecione a data de início.'); return; }
+    if (v[2] && v[2] < v[1]) { showToast('⚠️ A data de fim deve ser após a de início.'); return; }
+    const upd = { name:v[0], date:v[1], end_date:v[2]||null, time:v[3]||null, theme:v[4]||null };
+    const { error } = await sb.from('events').update(upd).eq('id', ev.id).eq('user_id', window._userId);
+    if (error) { showToast('Erro ao salvar: ' + error.message); return; }
+    Object.assign(ev, upd);
+    events.sort((a,b) => a.date.localeCompare(b.date) || (a.time||'').localeCompare(b.time||''));
+    const t = tasks.find(t => t._eventId === ev.id);
+    if (t) {
+      const timeStr = ev.time ? ` às ${ev.time.substring(0,5)}` : '';
+      const rangeStr = ev.end_date ? ` (até ${new Date(ev.end_date+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})})` : '';
+      t.title = `📅 ${ev.name}${timeStr}${rangeStr}`; render();
+    }
+    updateReminderWidget(); renderEvCalendar(); renderEvList();
+    showToast('✅ Compromisso atualizado!');
+  });
+}
+
 async function deleteEvent(id) {
   await sb.from('events').delete().eq('id', id);
   events = events.filter(e => e.id !== id);
@@ -2190,10 +2286,10 @@ function renderEvList() {
     const dEnd = e.end_date ? ` → ${new Date(e.end_date+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}` : '';
     const label = dStart + dEnd;
     const timeStr = e.time ? ` · ${e.time.substring(0,5)}` : '';
-    const themeStr = e.theme ? `<div class="ev-item-meta">📌 ${e.theme}</div>` : '';
+    const themeStr = e.theme ? `<div class="ev-item-meta">📌 ${rich(e.theme)}</div>` : '';
     return `<div class="ev-item">
-      <div><div class="ev-item-name">${e.name}</div><div class="ev-item-meta">${label}${timeStr}</div>${themeStr}</div>
-      <button class="ev-item-del" onclick="deleteEvent('${e.id}')" title="Remover">🗑</button>
+      <div><div class="ev-item-name">${rich(e.name)}</div><div class="ev-item-meta">${label}${timeStr}</div>${themeStr}</div>
+      <span style="white-space:nowrap"><button class="ev-item-del" style="opacity:.6" onclick="editEvent('${e.id}')" title="Editar">✎</button><button class="ev-item-del" onclick="deleteEvent('${e.id}')" title="Remover">🗑</button></span>
     </div>`;
   }).join('');
 }
