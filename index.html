@@ -384,6 +384,13 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
 .cl-field input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.45;cursor:pointer;}
 
 /* CLIENT TASKS IN BACKLOG */
+#est-task-section .cl-bk-hdr{display:flex;align-items:center;gap:6px;margin:10px 0 6px;}
+#est-task-section .cl-bk-hdr h3{font-family:'Playfair Display',serif;font-size:13px;color:var(--a3);text-transform:uppercase;letter-spacing:1px;}
+.esttask{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:8px;padding:6px 9px;display:flex;align-items:flex-start;gap:6px;margin-bottom:4px;font-size:11px;line-height:1.35;cursor:pointer}
+.esttask-body{flex:1;min-width:0}
+.esttask-name{font-size:12px;font-weight:600;color:var(--tx)}
+.esttask-sub{font-size:10px;color:var(--mu);margin-top:1px;white-space:pre-line}
+.esttask-st{font-size:9px;color:var(--mu2);border:1px solid var(--bd);border-radius:10px;padding:1px 6px;white-space:nowrap;flex-shrink:0}
 #cl-task-section .cl-bk-hdr{display:flex;align-items:center;gap:6px;margin:10px 0 6px;}
 #cl-task-section .cl-bk-hdr h3{font-family:'Playfair Display',serif;font-size:16px;color:var(--a3);text-transform:uppercase;letter-spacing:1px;}
 .cltask{background:rgba(92,240,200,.05);border:1px solid rgba(92,240,200,.18);border-radius:10px;padding:9px 11px;display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;animation:slideIn .3s;}
@@ -1104,6 +1111,7 @@ function render(){
 
   // Atualiza clientes no backlog
   renderClientTasks();
+  renderEstudoPreview();
 }
 
 function rich(s){
@@ -1652,6 +1660,27 @@ function clearDoneClients() {
   showToast('🗑 Concluídos removidos.');
 }
 
+function renderEstudoPreview() {
+  const old = document.getElementById('est-task-section');
+  if (old) old.remove();
+  if (typeof estudos === 'undefined' || !estudos.length) return;
+  const names = {backlog:'BackLog', fazendo:'Fazendo', espera:'Espera', feito:'Feito'};
+  const items = estudos.filter(e => (estKanban[e.id] || 'backlog') !== 'feito');
+  if (!items.length) return;
+  const sec = document.createElement('div');
+  sec.id = 'est-task-section';
+  sec.innerHTML = `<div class="cl-bk-hdr"><h3>📚 Estudos</h3></div>` + items.map(e => `<div class="esttask" onclick="showScreen('estudos')">
+    <span>📚</span>
+    <div class="esttask-body">
+      <div class="esttask-name">${rich(e.nome)}</div>
+      ${e.plat ? `<div class="esttask-sub">${rich(e.plat)}</div>` : ''}
+      ${e.nota ? `<div class="esttask-sub">${rich(e.nota)}</div>` : ''}
+    </div>
+    <span class="esttask-st">${names[estKanban[e.id] || 'backlog']}</span>
+  </div>`).join('');
+  document.getElementById('bklog').appendChild(sec);
+}
+
 function renderClientTasks() {
   const existing = document.getElementById('cl-task-section');
   if (existing) existing.remove();
@@ -1843,6 +1872,7 @@ function renderEstudos() {
       showToast(`📌 Movido para ${n[col]}!`);
     });
   });
+  renderEstudoPreview();
 }
 
 loadEstudos();
