@@ -754,6 +754,34 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
 .cl-cal-day.has-evt{box-shadow:inset 0 -3px 0 #d4a24c}
 .cl-cal-item.evt{border-left-color:#d4a24c}.cl-cal-item.evt b{color:#9a7424}
 .ev-item-cl{border-left:4px solid var(--a3);background:rgba(107,143,113,.08)}
+
+/* AGENDA v2 — mesmo layout de Clientes: formulário compacto no topo, lista à esquerda, calendário à direita */
+#eventos-screen{padding:0;gap:0;overflow:hidden}
+#eventos-screen.active{display:flex}
+.ev-form-card{border-radius:0;border-width:0 0 1px 0;box-shadow:none;padding:12px 18px;gap:8px}
+.ev-form-card h3{font-size:14px;margin:0}
+.ev-fields{grid-template-columns:2fr 1fr 1fr .7fr;gap:8px 10px}
+.ev-fields .ev-field.full{grid-column:auto}
+.ev-fields .ev-date-row{display:contents!important}
+.ev-fields .ev-field:last-child{grid-column:1/-1}
+.ev-date-row>div{flex:none!important;min-width:0}
+.ev-field label,.ev-date-row label{font-size:10px!important;letter-spacing:.8px!important}
+.ev-field input,.ev-date-row input{font-size:13px!important;padding:6px 10px!important;border-radius:8px!important;min-width:0;width:100%;box-sizing:border-box}
+.ev-add-btn{width:auto;align-self:flex-start;padding:7px 18px;font-size:12px;border-radius:8px}
+#ev-main-row{flex:1;display:flex;min-height:0}
+#ev-main-row .ev-list-card{flex:1 1 50%;min-width:0;border-radius:0;border-width:0;box-shadow:none;background:var(--bg);padding:14px 16px;overflow-y:auto}
+#ev-main-row .ev-list-card h3{font-size:13px;color:var(--mu);text-transform:uppercase;letter-spacing:1px}
+#ev-main-row .ev-cal-card{flex:1 1 50%;min-width:0;border-radius:0;border-width:0 0 0 1px;box-shadow:none;padding:16px 20px;overflow-y:auto}
+.ev-item{border-left:4px solid var(--a2);background:var(--s1);padding:9px 12px;border-radius:10px}
+.ev-item-name{font-size:15px}.ev-item-meta{font-size:12px}
+@media (max-width:900px){
+  #eventos-screen.active{overflow-y:auto}
+  .ev-fields{grid-template-columns:1fr 1fr}
+  .ev-fields .ev-field:first-child{grid-column:1/-1}
+  #ev-main-row{flex-direction:column;flex:none}
+  #ev-main-row .ev-list-card,#ev-main-row .ev-cal-card{flex:none;overflow:visible}
+  #ev-main-row .ev-cal-card{border-width:1px 0 0 0}
+}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1112,6 +1140,11 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
       <button class="ev-add-btn" onclick="addEvent()">+ Adicionar compromisso</button>
     </div>
 
+    <div id="ev-main-row">
+    <div class="ev-list-card">
+      <h3>Próximos compromissos</h3>
+      <div id="ev-list"></div>
+    </div>
     <div class="ev-cal-card">
       <div class="ev-cal-nav">
         <button class="ev-cal-nbtn" onclick="evNavMonth(-1)">‹</button>
@@ -1129,11 +1162,8 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
       </div>
       <div class="ev-cal-grid" id="ev-cal-days" style="margin-top:4px"></div>
     </div>
+    </div><!-- /ev-main-row -->
 
-    <div class="ev-list-card">
-      <h3>Próximos compromissos</h3>
-      <div id="ev-list"></div>
-    </div>
   </div>
 
 </div>
@@ -2689,7 +2719,7 @@ function renderEvCalendar() {
 function renderEvList() {
   const list = document.getElementById('ev-list');
   const today = todayStr();
-  const upcoming = allEvents().filter(e => e.date >= today).slice(0, 15);
+  const upcoming = allEvents().filter(e => e.date >= today).slice(0, 60);
   if (!upcoming.length) { list.innerHTML = '<div style="color:var(--mu);font-size:13px;padding:8px 0">Nenhum compromisso próximo.</div>'; return; }
   list.innerHTML = upcoming.map(e => {
     const d = new Date(e.date + 'T12:00:00');
