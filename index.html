@@ -742,6 +742,12 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
 .cl-row5 .cl-field input,.cl-row5 .cl-field select{padding:6px 7px;min-width:0}
 @media (max-width:900px){.cl-row5{grid-template-columns:1fr 1fr}}
 @media (max-width:480px){.cl-row5{grid-template-columns:1fr}}
+
+/* CLIENTES v5 — nome | nascimento | tipo na mesma linha */
+.cl-row-name{display:grid;grid-template-columns:2fr 1.1fr 1.3fr;gap:10px}
+.cl-row-name .cl-field input{min-width:0}
+.cc-nasc{font-size:11px;color:var(--mu);margin-top:-1px}
+@media (max-width:600px){.cl-row-name{grid-template-columns:1fr 1fr}.cl-row-name .cl-field:first-child{grid-column:1/-1}}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -954,10 +960,14 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
   <div id="clientes-screen">
     <div id="cl-top-row">
     <div id="cl-form-area">
-      <div class="cl-row2">
+      <div class="cl-row-name">
         <div class="cl-field">
           <label>👤 Nome do cliente</label>
           <input type="text" id="cl-nome" placeholder="Ex: Maria Silva"/>
+        </div>
+        <div class="cl-field">
+          <label>🎂 Nascimento</label>
+          <input type="date" id="cl-nasc"/>
         </div>
         <div class="cl-field">
           <label>🩺 Tipo de atendimento</label>
@@ -1136,7 +1146,7 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
   <div id="cl-edit-modal" onclick="event.stopPropagation()">
     <h3>✎ Editar cliente</h3>
     <label>Nome</label><input id="ce-nome" type="text">
-    <label>Tipo de atendimento</label><input id="ce-tipo" type="text">
+    <div class="ce-row"><div><label>🎂 Nascimento</label><input id="ce-nasc" type="date"></div><div><label>Tipo de atendimento</label><input id="ce-tipo" type="text"></div></div>
     <label>O que fazer</label><textarea id="ce-desc"></textarea>
     <div class="ce-row">
       <div><label>📅 Data da sessão (reagendar)</label><input id="ce-date" type="date"></div>
@@ -1745,16 +1755,18 @@ function addClient(toTop) {
   const desc = document.getElementById('cl-desc').value.trim();
   if (!nome) { showToast('⚠️ Digite o nome do cliente!'); return; }
   const sessionDate = document.getElementById('cl-date').value || todayStr();
+  const nasc = document.getElementById('cl-nasc').value || '';
   const returnDate = document.getElementById('cl-return').value || '';
   const valor = parseFloat(document.getElementById('cl-valor').value) || 0;
   const pago = document.getElementById('cl-pago').value === '1';
   const dataPago = pago ? (document.getElementById('cl-paydate').value || todayStr()) : (document.getElementById('cl-paydate').value || '');
   const createdAt = todayStr();
-  const client = { id: clIdCtr++, nome, tipo, desc, done: false, repeatDays: 0, createdAt, sessionDate, expiresAt: null, lastDoneDate: null, returnDate, valor, pago, dataPago };
+  const client = { id: clIdCtr++, nome, tipo, desc, done: false, repeatDays: 0, createdAt, sessionDate, expiresAt: null, lastDoneDate: null, nasc, returnDate, valor, pago, dataPago };
   if (toTop) { clients.unshift(client); } else { clients.push(client); }
   document.getElementById('cl-nome').value = '';
   document.getElementById('cl-tipo').value = '';
   document.getElementById('cl-desc').value = '';
+  document.getElementById('cl-nasc').value = '';
   document.getElementById('cl-return').value = '';
   document.getElementById('cl-valor').value = '';
   document.getElementById('cl-pago').value = '0';
@@ -1818,6 +1830,7 @@ function renderClients() {
       <button class="cc-check${c.done ? ' on' : ''}" onclick="event.stopPropagation();toggleClient(${c.id})">${c.done ? '✓' : ''}</button>
       <div class="cc-body">
         <div class="cc-name" contenteditable="true" onblur="editClient(${c.id},'nome',this.textContent.trim())" spellcheck="false">${esc(c.nome)}</div>
+        ${c.nasc ? `<div class="cc-nasc">🎂 ${fmtDate(c.nasc)}</div>` : ''}
         ${c.tipo ? `<div class="cc-service" contenteditable="true" onblur="editClient(${c.id},'tipo',this.textContent.trim())" spellcheck="false">${esc(c.tipo)}</div>` : ''}
         ${c.desc ? `<div class="cc-desc" contenteditable="true" onblur="editClient(${c.id},'desc',this.textContent.trim())" spellcheck="false">${esc(c.desc)}</div>` : ''}
         <div class="cc-dates">
@@ -1905,7 +1918,7 @@ function openClientEdit(id) {
   const c = clients.find(c => c.id === id); if (!c) return;
   ceId = id;
   const set = (k, v) => document.getElementById('ce-' + k).value = v;
-  set('nome', c.nome || ''); set('tipo', c.tipo || ''); set('desc', c.desc || '');
+  set('nome', c.nome || ''); set('nasc', c.nasc || ''); set('tipo', c.tipo || ''); set('desc', c.desc || '');
   set('date', c.sessionDate || ''); set('return', c.returnDate || '');
   set('valor', c.valor || ''); set('pago', c.pago ? '1' : '0'); set('paydate', c.dataPago || '');
   document.getElementById('cl-edit-overlay').classList.add('open');
@@ -1915,7 +1928,7 @@ function saveClientEdit() {
   const c = clients.find(c => c.id === ceId); if (!c) { closeClientEdit(); return; }
   const g = k => document.getElementById('ce-' + k).value.trim();
   if (!g('nome')) { showToast('⚠️ O nome não pode ficar vazio.'); return; }
-  c.nome = g('nome'); c.tipo = g('tipo'); c.desc = g('desc');
+  c.nome = g('nome'); c.nasc = g('nasc'); c.tipo = g('tipo'); c.desc = g('desc');
   c.sessionDate = g('date'); c.returnDate = g('return');
   c.valor = parseFloat(g('valor')) || 0;
   c.pago = g('pago') === '1';
