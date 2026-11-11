@@ -735,6 +735,13 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
 #cl-edit-modal label{font-size:11px;margin:8px 0 3px}
 #cl-edit-modal input,#cl-edit-modal textarea,#cl-edit-modal select{font-size:13px;padding:6px 9px;border-radius:7px}
 #cl-edit-modal textarea{min-height:52px}
+
+/* CLIENTES v4 — datas, valor e pagamento na mesma linha */
+.cl-row5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.cl-row5 .cl-field label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl-row5 .cl-field input,.cl-row5 .cl-field select{padding:6px 7px;min-width:0}
+@media (max-width:900px){.cl-row5{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.cl-row5{grid-template-columns:1fr}}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -961,7 +968,7 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
         <label>📝 O que fazer hoje</label>
         <textarea id="cl-desc" rows="2" placeholder="Descreva o que precisa ser feito neste atendimento..."></textarea>
       </div>
-      <div class="cl-row2">
+      <div class="cl-row5">
         <div class="cl-field">
           <label>📅 Data da sessão</label>
           <input type="date" id="cl-date"/>
@@ -970,8 +977,6 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
           <label>🔁 Data de retorno <span style="font-size:11px;color:var(--mu)">(opcional)</span></label>
           <input type="date" id="cl-return"/>
         </div>
-      </div>
-      <div class="cl-row3">
         <div class="cl-field">
           <label>💰 Valor da consulta (R$)</label>
           <input type="number" id="cl-valor" min="0" step="0.01" placeholder="Ex: 250"/>
