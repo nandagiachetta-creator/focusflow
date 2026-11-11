@@ -495,9 +495,10 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
 #body{flex-direction:column;overflow-y:auto;overflow-x:hidden}
 #left{width:100%;min-width:0;flex:none;overflow:visible;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);grid-template-rows:auto 1fr;
   gap:12px 16px;padding:16px 20px 4px;border-right:none;border-bottom:1px solid var(--bd);box-shadow:none;background:var(--bg)}
-#inp-area{grid-column:1;grid-row:1 / span 2;margin:0}
-#suggest{grid-column:2;grid-row:1;margin:0}
-#bklog{grid-column:2;grid-row:2;flex:none;overflow-y:auto;max-height:240px;padding:4px 2px}
+#left{grid-template-columns:1fr}
+#inp-area{grid-column:1;grid-row:1;margin:0}
+#suggest,#bklog{display:none!important}
+.matrix-name{font-size:11px!important;color:var(--mu2);text-transform:uppercase;letter-spacing:1.2px;margin:-8px 0 -12px 2px}
 #brain{min-height:110px}
 /* DISTRIBUIÇÃO: mais respiro entre os blocos */
 #right{flex:none;overflow:visible;padding:22px 20px 40px;gap:22px}
@@ -737,6 +738,7 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
         <textarea id="brain" placeholder="Escreva tudo de uma vez...&#10;&#10;Ex: enviar mensagem no grupo até às 16:20, reunião às 15h, limpar casa, estudar inglês...&#10;&#10;(Ctrl+Enter para classificar)"></textarea>
         <div class="inp-row">
           <span class="hint">Enter para classificar • Shift+Enter nova linha</span>
+          <button id="clear-done" onclick="clearDone()">limpar concluídas</button>
           <button id="add-btn" onclick="handleAdd()" disabled>✦ Classificar</button>
         </div>
       </div>
@@ -747,7 +749,6 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
       <div id="bklog">
         <div class="bk-hdr">
           <h3>Tarefas (<span id="task-count">0</span>)</h3>
-          <button id="clear-done" onclick="clearDone()">limpar concluídas</button>
         </div>
         <div id="task-list"></div>
         <div id="empty-msg">Vazio! Escreva o que está na sua cabeça acima. 🧠</div>
@@ -760,6 +761,7 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
         <div class="prog-bar"><div id="prog-fill"></div></div>
       </div>
 
+      <div class="matrix-name">Matriz de Eisenhower</div>
       <div id="matrix">
         <div class="quad q1" data-q="1" id="quad-1">
           <div class="q-hdr"><div class="q-dot" style="background:var(--q1x)"></div>
