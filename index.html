@@ -488,12 +488,32 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
 .qi-ico{font-size:16px}
 .qi-ck{border-radius:50%;width:22px;height:22px}
 .qi-ck.on{background:var(--a3);border-color:var(--a3)}
-@media (max-width:1100px){#matrix{grid-template-columns:1fr}}
-/* tarefas só na matriz: esconde lista duplicada, painel esquerdo mais enxuto */
+@media (max-width:760px){#matrix{grid-template-columns:1fr}}
+/* tarefas só na matriz: esconde lista duplicada */
 #task-list,#empty-msg{display:none!important}
-#left{width:360px;min-width:360px}
-#bklog{flex:none;padding:10px 14px}
-#brain{min-height:200px}
+/* BLOCO SUPERIOR: "Despeje sua mente" em cima, largura total */
+#body{flex-direction:column;overflow-y:auto;overflow-x:hidden}
+#left{width:100%;min-width:0;flex:none;overflow:visible;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);grid-template-rows:auto 1fr;
+  gap:12px 16px;padding:16px 20px 4px;border-right:none;border-bottom:1px solid var(--bd);box-shadow:none;background:var(--bg)}
+#inp-area{grid-column:1;grid-row:1 / span 2;margin:0}
+#suggest{grid-column:2;grid-row:1;margin:0}
+#bklog{grid-column:2;grid-row:2;flex:none;overflow-y:auto;max-height:240px;padding:4px 2px}
+#brain{min-height:110px}
+/* DISTRIBUIÇÃO: mais respiro entre os blocos */
+#right{flex:none;overflow:visible;padding:22px 20px 40px;gap:22px}
+#matrix{gap:22px}
+.quad{padding:20px;min-height:260px;gap:12px}
+.q-hdr{padding-bottom:12px;margin-bottom:4px}
+.q-list{gap:10px;max-height:340px}
+.qi{padding:12px 14px}
+.dev-sec{margin-top:6px;padding:20px}
+@media (max-width:768px){
+  #left{grid-template-columns:1fr;padding:12px 10px 4px}
+  #inp-area,#suggest,#bklog{grid-column:1;grid-row:auto}
+  #bklog{max-height:none}
+  #right{padding:14px 10px 80px;gap:16px}
+  #matrix{gap:14px}
+}
 
 /* MOBILE */
 @media (max-width: 768px) {
@@ -1782,7 +1802,7 @@ function renderKanban(devTasks) {
     const list = document.getElementById('kl-' + col);
     const count = document.getElementById('kc-' + col);
     list.innerHTML = '';
-    const colTasks = devTasks.filter(t => kanban[t.id] === col);
+    const colTasks = []; // tela inicial: este quadro mostra só os cursos da aba Estudos
     const colEst = (typeof estudos !== 'undefined' ? estudos : []).filter(e => (estKanban[e.id] || 'backlog') === col);
     count.textContent = colTasks.length + colEst.length;
 
@@ -1858,7 +1878,7 @@ function renderKanban(devTasks) {
 // Atualiza o quadro "Desenvolvimento & Estudos" da tela inicial (tarefas + cursos da aba Estudos)
 function refreshHomeKanban() {
   const devT = tasks.filter(t => ['📚 Estudos','🌱 Dev Pessoal'].includes(t.category));
-  const has = devT.length || (typeof estudos !== 'undefined' && estudos.length);
+  const has = (typeof estudos !== 'undefined' && estudos.length);
   const sec = document.getElementById('dev-sec');
   if (sec) sec.style.display = has ? 'block' : 'none';
   if (has) renderKanban(devT);
