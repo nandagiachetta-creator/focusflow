@@ -641,6 +641,74 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
   #clientes-screen.active,#estudos-screen.active,#eventos-screen.active{bottom:0!important}
 }
 @media (max-width:480px){#date-str{display:none}#hdr .bnav-btn{padding:6px 7px}}
+
+/* CLIENTES v2 */
+#cl-top-row{display:block}
+#cl-form-area{border-right:none;padding:14px 18px;gap:10px}
+.cl-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.cl-field select{background:var(--s2);border:1.5px solid var(--bd);border-radius:10px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:16px;padding:10px 13px;outline:none}
+.cl-field select:focus{border-color:var(--a)}
+.cl-field input:focus,.cl-field textarea:focus{box-shadow:0 0 0 3px rgba(107,143,113,.18)}
+.cl-field input[type="date"]::-webkit-calendar-picker-indicator,.cc-date-input::-webkit-calendar-picker-indicator{filter:none;opacity:.6}
+#cl-main-row{flex:1;display:flex;min-height:0}
+#cl-queue-area{flex:1 1 50%;min-width:0;padding:14px 16px}
+#cl-cal{flex:1 1 50%;width:auto;min-width:0;overflow-y:auto;padding:16px 20px;justify-content:flex-start;border-left:1px solid var(--bd);background:var(--s1)}
+.cl-cal-nav{margin-bottom:12px}
+.cl-cal-nav h4{font-size:18px}
+.cl-cal-nbtn{font-size:18px;padding:2px 12px}
+.cl-cal-grid{gap:4px}
+.cl-cal-dow{font-size:12px;padding:4px 0}
+.cl-cal-day{font-size:16px;padding:12px 2px;border-radius:10px;background:var(--bg)}
+.cl-cal-day.today{background:rgba(107,143,113,.28);color:var(--a3)}
+.cl-cal-day.has-apt::after{width:6px;height:6px;bottom:4px;left:calc(50% - 8px);transform:none;background:var(--a3)}
+.cl-cal-day.has-ret::before{content:'';position:absolute;bottom:4px;left:calc(50% + 2px);width:6px;height:6px;border-radius:50%;background:var(--a2)}
+.cl-cal-day.has-ret:not(.has-apt){font-weight:800;color:var(--tx)}
+.cl-cal-legend{display:flex;gap:16px;justify-content:center;font-size:13px;color:var(--mu);margin:12px 0 4px}
+.cl-cal-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.dot-s{background:var(--a3)}.dot-r{background:var(--a2)}
+#cl-cal-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.cl-cal-item{display:flex;gap:10px;align-items:center;background:var(--bg);border:1px solid var(--bd);border-left:4px solid var(--a3);border-radius:8px;padding:8px 12px;font-size:15px}
+.cl-cal-item.ret{border-left-color:var(--a2)}
+.cl-cal-item b{color:var(--a3);min-width:46px}.cl-cal-item.ret b{color:var(--a2)}
+.cl-cal-item span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-cal-item em{font-style:normal;font-size:12px;color:var(--mu)}
+.cl-cal-none{font-size:14px;color:var(--mu2);font-style:italic;text-align:center}
+#cl-fin{display:flex;gap:10px;flex-wrap:wrap;font-size:14px;font-weight:600}
+#cl-fin:empty{display:none}
+.fin-ok{color:var(--a3);background:rgba(107,143,113,.15);padding:4px 12px;border-radius:20px}
+.fin-pend{color:#9a5d1f;background:rgba(193,127,62,.15);padding:4px 12px;border-radius:20px}
+.ccard{padding:12px;gap:8px;cursor:default;border-left:4px solid var(--a)}
+.ccard:hover{box-shadow:0 3px 12px rgba(0,0,0,.1)}
+.cc-check{border-color:var(--bd2)}
+.cc-name{font-size:17px}.cc-service{font-size:14px}.cc-desc{font-size:13px}
+.cc-dates{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.cc-date-wrap{margin-top:0;font-size:14px;color:var(--mu);cursor:pointer}
+.cc-date-input{width:128px;border-bottom:1px dashed var(--bd2);font-size:13px}
+.cc-pay{align-self:flex-start;margin-top:5px;border:1px solid var(--bd2);border-radius:20px;padding:3px 11px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;background:var(--bg)}
+.cc-pay.paid{background:rgba(107,143,113,.18);color:var(--a3);border-color:rgba(107,143,113,.4)}
+.cc-pay.pending{background:rgba(193,127,62,.12);color:#9a5d1f;border-color:rgba(193,127,62,.35)}
+.cc-acts{flex-direction:row;flex-wrap:wrap;width:78px;justify-content:flex-end;gap:4px}
+.cc-act{padding:4px 0;width:34px;text-align:center;font-size:14px}
+.cc-act.aedit{border-color:rgba(107,143,113,.4);color:var(--a3)}
+.cc-act.aedit:hover{background:rgba(107,143,113,.15)}
+#cl-edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+#cl-edit-overlay.open{display:flex}
+#cl-edit-modal{background:var(--s1);border:1px solid var(--bd2);border-radius:16px;padding:22px;width:100%;max-width:520px;max-height:90vh;overflow:auto;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+#cl-edit-modal h3{margin:0 0 8px;font-size:18px;color:var(--tx)}
+#cl-edit-modal label{display:block;font-size:12px;color:var(--mu);margin:10px 0 4px}
+#cl-edit-modal input,#cl-edit-modal textarea,#cl-edit-modal select{width:100%;box-sizing:border-box;background:var(--bg);border:1px solid var(--bd2);border-radius:8px;padding:9px 11px;font:inherit;font-size:15px;color:var(--tx)}
+#cl-edit-modal textarea{min-height:70px;resize:vertical}
+.ce-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ce-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:900px){
+  #cl-main-row{flex-direction:column}
+  #cl-queue-area{flex:none;overflow:visible}
+  #cl-cal{flex:none;border-left:none;border-top:1px solid var(--bd)}
+  .cl-row3,.ce-row3{grid-template-columns:1fr}
+  .ce-row{grid-template-columns:1fr}
+  #clientes-screen.active{overflow-y:auto}
+  #clientes-screen.active #cl-main-row{min-height:auto}
+}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -873,14 +941,43 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
           <input type="date" id="cl-date"/>
         </div>
         <div class="cl-field">
-          <label>🔁 Repetir por quantos dias? <span style="font-size:11px;color:var(--mu)">(opcional)</span></label>
-          <input type="number" id="cl-repeat" min="1" max="365" placeholder="Ex: 5"/>
+          <label>🔁 Data de retorno <span style="font-size:11px;color:var(--mu)">(opcional)</span></label>
+          <input type="date" id="cl-return"/>
+        </div>
+      </div>
+      <div class="cl-row3">
+        <div class="cl-field">
+          <label>💰 Valor da consulta (R$)</label>
+          <input type="number" id="cl-valor" min="0" step="0.01" placeholder="Ex: 250"/>
+        </div>
+        <div class="cl-field">
+          <label>Pagamento</label>
+          <select id="cl-pago" onchange="if(this.value==='1'&&!document.getElementById('cl-paydate').value)document.getElementById('cl-paydate').value=todayStr()">
+            <option value="0">⏳ Não pago</option>
+            <option value="1">✅ Pago</option>
+          </select>
+        </div>
+        <div class="cl-field">
+          <label>Data do pagamento</label>
+          <input type="date" id="cl-paydate"/>
         </div>
       </div>
       <div class="cl-form-btns">
         <button class="cl-btn now" onclick="addClient(true)">▲ Fazer Agora</button>
         <button class="cl-btn add" onclick="addClient(false)">+ Adicionar à Fila</button>
       </div>
+    </div>
+    </div><!-- /cl-top-row -->
+
+    <div id="cl-main-row">
+    <div id="cl-queue-area">
+      <div class="cl-queue-hdr">
+        <h3>Fila de Clientes</h3>
+        <button id="cl-clear-done" onclick="clearDoneClients()">limpar concluídos</button>
+      </div>
+      <div id="cl-fin"></div>
+      <div id="cl-empty">Nenhum cliente na fila.<br>Adicione acima para começar! 👆</div>
+      <div id="cl-list"></div>
     </div>
     <div id="cl-cal">
       <div class="cl-cal-nav">
@@ -889,17 +986,10 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
         <button class="cl-cal-nbtn" onclick="navCalMonth(1)">›</button>
       </div>
       <div class="cl-cal-grid" id="cl-cal-grid"></div>
+      <div class="cl-cal-legend"><span><i class="dot-s"></i> Sessão</span><span><i class="dot-r"></i> Retorno</span></div>
+      <div id="cl-cal-list"></div>
     </div>
-    </div><!-- /cl-top-row -->
-
-    <div id="cl-queue-area">
-      <div class="cl-queue-hdr">
-        <h3>Fila de Clientes</h3>
-        <button id="cl-clear-done" onclick="clearDoneClients()">limpar concluídos</button>
-      </div>
-      <div id="cl-empty">Nenhum cliente na fila.<br>Adicione acima para começar! 👆</div>
-      <div id="cl-list"></div>
-    </div>
+    </div><!-- /cl-main-row -->
   </div>
 
   <div id="estudos-screen">
@@ -1008,6 +1098,25 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
     <h3 id="edit-title">Editar</h3>
     <div id="edit-fields"></div>
     <div class="edit-acts"><button onclick="closeEdit()">Cancelar</button><button class="pri" onclick="saveEdit()">Salvar</button></div>
+  </div>
+</div>
+
+<div id="cl-edit-overlay" onclick="closeClientEdit()">
+  <div id="cl-edit-modal" onclick="event.stopPropagation()">
+    <h3>✎ Editar cliente</h3>
+    <label>Nome</label><input id="ce-nome" type="text">
+    <label>Tipo de atendimento</label><input id="ce-tipo" type="text">
+    <label>O que fazer</label><textarea id="ce-desc"></textarea>
+    <div class="ce-row">
+      <div><label>📅 Data da sessão (reagendar)</label><input id="ce-date" type="date"></div>
+      <div><label>🔁 Data de retorno</label><input id="ce-return" type="date"></div>
+    </div>
+    <div class="ce-row3">
+      <div><label>💰 Valor (R$)</label><input id="ce-valor" type="number" min="0" step="0.01"></div>
+      <div><label>Pagamento</label><select id="ce-pago" onchange="if(this.value==='1'&&!document.getElementById('ce-paydate').value)document.getElementById('ce-paydate').value=todayStr()"><option value="0">⏳ Não pago</option><option value="1">✅ Pago</option></select></div>
+      <div><label>Data do pagamento</label><input id="ce-paydate" type="date"></div>
+    </div>
+    <div class="edit-acts"><button onclick="closeClientEdit()">Cancelar</button><button class="pri" onclick="saveClientEdit()">Salvar</button></div>
   </div>
 </div>
 
@@ -1592,7 +1701,9 @@ function showScreen(name) {
   if (isEv) { renderEvCalendar(); renderEvList(); }
 }
 
-function todayStr() { return new Date().toISOString().split('T')[0]; }
+function todayStr() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function fmtDate(s) { if (!s) return ''; const [y,m,d] = s.split('-'); return d + '/' + m + '/' + y; }
+function fmtBRL(n) { return Number(n||0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
 function addDays(dateStr, n) {
   const d = new Date(dateStr); d.setDate(d.getDate() + n); return d.toISOString().split('T')[0];
 }
@@ -1602,16 +1713,21 @@ function addClient(toTop) {
   const tipo = document.getElementById('cl-tipo').value.trim();
   const desc = document.getElementById('cl-desc').value.trim();
   if (!nome) { showToast('⚠️ Digite o nome do cliente!'); return; }
-  const repeatDays = parseInt(document.getElementById('cl-repeat').value) || 0;
   const sessionDate = document.getElementById('cl-date').value || todayStr();
+  const returnDate = document.getElementById('cl-return').value || '';
+  const valor = parseFloat(document.getElementById('cl-valor').value) || 0;
+  const pago = document.getElementById('cl-pago').value === '1';
+  const dataPago = pago ? (document.getElementById('cl-paydate').value || todayStr()) : (document.getElementById('cl-paydate').value || '');
   const createdAt = todayStr();
-  const expiresAt = repeatDays > 0 ? addDays(sessionDate, repeatDays) : null;
-  const client = { id: clIdCtr++, nome, tipo, desc, done: false, repeatDays, createdAt, sessionDate, expiresAt, lastDoneDate: null };
+  const client = { id: clIdCtr++, nome, tipo, desc, done: false, repeatDays: 0, createdAt, sessionDate, expiresAt: null, lastDoneDate: null, returnDate, valor, pago, dataPago };
   if (toTop) { clients.unshift(client); } else { clients.push(client); }
   document.getElementById('cl-nome').value = '';
   document.getElementById('cl-tipo').value = '';
   document.getElementById('cl-desc').value = '';
-  document.getElementById('cl-repeat').value = '';
+  document.getElementById('cl-return').value = '';
+  document.getElementById('cl-valor').value = '';
+  document.getElementById('cl-pago').value = '0';
+  document.getElementById('cl-paydate').value = '';
   document.getElementById('cl-date').value = todayStr();
   saveClients();
   renderClients();
@@ -1646,6 +1762,10 @@ function renderClients() {
   list.innerHTML = '';
   const hasDone = clients.some(c => c.done);
   clearBtn.style.display = hasDone ? 'inline' : 'none';
+  const recebido = clients.filter(c => c.pago).reduce((a,c) => a + (c.valor||0), 0);
+  const receber = clients.filter(c => !c.pago).reduce((a,c) => a + (c.valor||0), 0);
+  const fin = document.getElementById('cl-fin');
+  if (fin) fin.innerHTML = (recebido||receber) ? `<span class="fin-ok">✅ Recebido: ${fmtBRL(recebido)}</span><span class="fin-pend">⏳ A receber: ${fmtBRL(receber)}</span>` : '';
   if (!clients.length) { empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   clients.forEach((c, idx) => {
@@ -1669,16 +1789,18 @@ function renderClients() {
         <div class="cc-name" contenteditable="true" onblur="editClient(${c.id},'nome',this.textContent.trim())" spellcheck="false">${esc(c.nome)}</div>
         ${c.tipo ? `<div class="cc-service" contenteditable="true" onblur="editClient(${c.id},'tipo',this.textContent.trim())" spellcheck="false">${esc(c.tipo)}</div>` : ''}
         ${c.desc ? `<div class="cc-desc" contenteditable="true" onblur="editClient(${c.id},'desc',this.textContent.trim())" spellcheck="false">${esc(c.desc)}</div>` : ''}
-        <div class="cc-date-wrap">
-          <span class="cc-date-label">📅</span>
-          <input type="date" class="cc-date-input" value="${c.sessionDate||''}" onclick="event.stopPropagation()" onchange="event.stopPropagation();editClientDate(${c.id},this.value)">
+        <div class="cc-dates">
+          <label class="cc-date-wrap" title="Data da sessão">📅 <input type="date" class="cc-date-input" value="${c.sessionDate||''}" onclick="event.stopPropagation()" onchange="event.stopPropagation();editClientDate(${c.id},this.value)"></label>
+          <label class="cc-date-wrap" title="Data de retorno">🔁 <input type="date" class="cc-date-input" value="${c.returnDate||''}" onclick="event.stopPropagation()" onchange="event.stopPropagation();editClientReturn(${c.id},this.value)"></label>
         </div>
+        <button class="cc-pay ${c.pago?'paid':'pending'}" title="Clique para marcar pago / não pago" onclick="event.stopPropagation();togglePago(${c.id})">💰 ${c.valor?fmtBRL(c.valor):'sem valor'} · ${c.pago?'✅ Pago'+(c.dataPago?' em '+fmtDate(c.dataPago):''):'⏳ Não pago'}</button>
         ${repeatBadge}
       </div>
       <div class="cc-acts">
-        <button class="cc-act anow" onclick="event.stopPropagation();moveClient(${c.id},'top')">▲ Agora</button>
-        <button class="cc-act alast" onclick="event.stopPropagation();moveClient(${c.id},'bottom')">▼ Depois</button>
-        <button class="cc-act adel" onclick="event.stopPropagation();deleteClient(${c.id})">✕</button>
+        <button class="cc-act aedit" title="Editar" onclick="event.stopPropagation();openClientEdit(${c.id})">✎</button>
+        <button class="cc-act anow" title="Mover para o topo" onclick="event.stopPropagation();moveClient(${c.id},'top')">▲</button>
+        <button class="cc-act alast" title="Mover para o final" onclick="event.stopPropagation();moveClient(${c.id},'bottom')">▼</button>
+        <button class="cc-act adel" title="Remover" onclick="event.stopPropagation();deleteClient(${c.id})">✕</button>
       </div>`;
     if (idx === 0) el.style.animation = 'nowAnim .35s';
     el.addEventListener('dragstart', e => {
@@ -1732,6 +1854,46 @@ function editClientDate(id, val) {
   saveClients();
   renderClientCalendar();
 }
+function editClientReturn(id, val) {
+  const c = clients.find(c => c.id === id);
+  if (!c) return;
+  c.returnDate = val;
+  saveClients(); renderClientCalendar();
+  showToast(val ? '🔁 Retorno agendado para ' + fmtDate(val) : 'Retorno removido.');
+}
+function togglePago(id) {
+  const c = clients.find(c => c.id === id);
+  if (!c) return;
+  c.pago = !c.pago;
+  c.dataPago = c.pago ? todayStr() : '';
+  saveClients(); renderClients();
+  showToast(c.pago ? '✅ Marcado como pago!' : '⏳ Marcado como não pago.');
+}
+let ceId = null;
+function openClientEdit(id) {
+  const c = clients.find(c => c.id === id); if (!c) return;
+  ceId = id;
+  const set = (k, v) => document.getElementById('ce-' + k).value = v;
+  set('nome', c.nome || ''); set('tipo', c.tipo || ''); set('desc', c.desc || '');
+  set('date', c.sessionDate || ''); set('return', c.returnDate || '');
+  set('valor', c.valor || ''); set('pago', c.pago ? '1' : '0'); set('paydate', c.dataPago || '');
+  document.getElementById('cl-edit-overlay').classList.add('open');
+}
+function closeClientEdit() { document.getElementById('cl-edit-overlay').classList.remove('open'); ceId = null; }
+function saveClientEdit() {
+  const c = clients.find(c => c.id === ceId); if (!c) { closeClientEdit(); return; }
+  const g = k => document.getElementById('ce-' + k).value.trim();
+  if (!g('nome')) { showToast('⚠️ O nome não pode ficar vazio.'); return; }
+  c.nome = g('nome'); c.tipo = g('tipo'); c.desc = g('desc');
+  c.sessionDate = g('date'); c.returnDate = g('return');
+  c.valor = parseFloat(g('valor')) || 0;
+  c.pago = g('pago') === '1';
+  c.dataPago = c.pago ? (g('paydate') || todayStr()) : g('paydate');
+  closeClientEdit();
+  saveClients(); renderClients(); renderClientCalendar(); renderClientTasks();
+  showToast('✅ Cliente atualizado!');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeClientEdit(); });
 function moveClient(id, dir) {
   const idx = clients.findIndex(c => c.id === id);
   if (idx === -1) return;
@@ -2074,12 +2236,17 @@ function renderClientCalendar() {
   title.textContent = new Date(calYear, calMonth, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
   // Dias com atendimento neste mês
-  const aptDays = new Set();
+  const aptDays = new Set(), retDays = new Set(), monthItems = [];
   clients.forEach(c => {
     // Sessão pontual
     if (c.sessionDate) {
       const d = new Date(c.sessionDate + 'T12:00:00');
-      if (d.getFullYear() === calYear && d.getMonth() === calMonth) aptDays.add(d.getDate());
+      if (d.getFullYear() === calYear && d.getMonth() === calMonth) { aptDays.add(d.getDate()); monthItems.push({date:c.sessionDate, nome:c.nome, kind:'Sessão'}); }
+    }
+    // Retorno agendado
+    if (c.returnDate) {
+      const d = new Date(c.returnDate + 'T12:00:00');
+      if (d.getFullYear() === calYear && d.getMonth() === calMonth) { retDays.add(d.getDate()); monthItems.push({date:c.returnDate, nome:c.nome, kind:'Retorno'}); }
     }
     // Sessões recorrentes: marca cada dia dentro do intervalo
     if (c.repeatDays && c.sessionDate && c.expiresAt) {
@@ -2115,9 +2282,18 @@ function renderClientCalendar() {
     let cls = 'cl-cal-day';
     if (isThisMonth && d === today.getDate()) cls += ' today';
     if (aptDays.has(d)) cls += ' has-apt';
+    if (retDays.has(d)) cls += ' has-ret';
     cell.className = cls;
     cell.textContent = d;
     grid.appendChild(cell);
+  }
+  // Lista do mês (sessões e retornos)
+  const lst = document.getElementById('cl-cal-list');
+  if (lst) {
+    monthItems.sort((a,b) => a.date.localeCompare(b.date));
+    lst.innerHTML = monthItems.length
+      ? monthItems.map(i => `<div class="cl-cal-item ${i.kind==='Retorno'?'ret':'ses'}"><b>${fmtDate(i.date).slice(0,5)}</b><span>${esc(i.nome)}</span><em>${i.kind}</em></div>`).join('')
+      : '<div class="cl-cal-none">Nada agendado neste mês.</div>';
   }
 }
 
