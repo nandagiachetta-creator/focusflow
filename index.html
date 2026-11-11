@@ -748,6 +748,12 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
 .cl-row-name .cl-field input{min-width:0}
 .cc-nasc{font-size:11px;color:var(--mu);margin-top:-1px}
 @media (max-width:600px){.cl-row-name{grid-template-columns:1fr 1fr}.cl-row-name .cl-field:first-child{grid-column:1/-1}}
+
+/* AGENDA <-> CLIENTES */
+.dot-e{background:#d4a24c}
+.cl-cal-day.has-evt{box-shadow:inset 0 -3px 0 #d4a24c}
+.cl-cal-item.evt{border-left-color:#d4a24c}.cl-cal-item.evt b{color:#9a7424}
+.ev-item-cl{border-left:4px solid var(--a3);background:rgba(107,143,113,.08)}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1027,7 +1033,7 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
         <button class="cl-cal-nbtn" onclick="navCalMonth(1)">›</button>
       </div>
       <div class="cl-cal-grid" id="cl-cal-grid"></div>
-      <div class="cl-cal-legend"><span><i class="dot-s"></i> Sessão</span><span><i class="dot-r"></i> Retorno</span></div>
+      <div class="cl-cal-legend"><span><i class="dot-s"></i> Sessão</span><span><i class="dot-r"></i> Retorno</span><span><i class="dot-e"></i> Evento da agenda</span></div>
       <div id="cl-cal-list"></div>
     </div>
     </div><!-- /cl-main-row -->
@@ -1720,6 +1726,7 @@ function loadClients() {
 }
 function saveClients() {
   try { localStorage.setItem(_key(CL_KEY), JSON.stringify(clients)); } catch {}
+  refreshAgenda();
 }
 
 function showScreen(name) {
@@ -2280,7 +2287,14 @@ function renderClientCalendar() {
   title.textContent = new Date(calYear, calMonth, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
   // Dias com atendimento neste mês
-  const aptDays = new Set(), retDays = new Set(), monthItems = [];
+  const aptDays = new Set(), retDays = new Set(), evtDays = new Set(), monthItems = [];
+  (typeof events !== 'undefined' ? events : []).forEach(e => {
+    const start = new Date(e.date + 'T12:00:00'), end = new Date((e.end_date || e.date) + 'T12:00:00');
+    if (start.getFullYear() === calYear && start.getMonth() === calMonth) monthItems.push({date:e.date, nome:e.name, kind:'Evento'});
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      if (d.getFullYear() === calYear && d.getMonth() === calMonth) evtDays.add(d.getDate());
+    }
+  });
   clients.forEach(c => {
     // Sessão pontual
     if (c.sessionDate) {
@@ -2327,6 +2341,7 @@ function renderClientCalendar() {
     if (isThisMonth && d === today.getDate()) cls += ' today';
     if (aptDays.has(d)) cls += ' has-apt';
     if (retDays.has(d)) cls += ' has-ret';
+    if (evtDays.has(d)) cls += ' has-evt';
     cell.className = cls;
     cell.textContent = d;
     grid.appendChild(cell);
@@ -2336,7 +2351,7 @@ function renderClientCalendar() {
   if (lst) {
     monthItems.sort((a,b) => a.date.localeCompare(b.date));
     lst.innerHTML = monthItems.length
-      ? monthItems.map(i => `<div class="cl-cal-item ${i.kind==='Retorno'?'ret':'ses'}"><b>${fmtDate(i.date).slice(0,5)}</b><span>${esc(i.nome)}</span><em>${i.kind}</em></div>`).join('')
+      ? monthItems.map(i => `<div class="cl-cal-item ${i.kind==='Retorno'?'ret':i.kind==='Evento'?'evt':'ses'}"><b>${fmtDate(i.date).slice(0,5)}</b><span>${esc(i.nome)}</span><em>${i.kind}</em></div>`).join('')
       : '<div class="cl-cal-none">Nada agendado neste mês.</div>';
   }
 }
@@ -2502,6 +2517,22 @@ let events = [];
 let evCalYear = new Date().getFullYear();
 let evCalMonth = new Date().getMonth();
 
+// Sessões e retornos dos clientes aparecem na Agenda (mesmos dados, sem duplicar)
+function clientAgendaItems() {
+  const out = [];
+  (typeof clients !== 'undefined' ? clients : []).forEach(c => {
+    const base = c.nome + (c.tipo ? ' — ' + c.tipo : '');
+    if (c.sessionDate) out.push({ id: 'cl-s-' + c.id, name: '👤 ' + base, date: c.sessionDate, end_date: null, time: null, theme: c.desc || null, _client: c.id, _kind: 'Sessão' });
+    if (c.returnDate) out.push({ id: 'cl-r-' + c.id, name: '🔁 Retorno — ' + c.nome, date: c.returnDate, end_date: null, time: null, theme: c.tipo || null, _client: c.id, _kind: 'Retorno' });
+  });
+  return out;
+}
+function allEvents() {
+  return events.concat(clientAgendaItems()).sort((a,b) => a.date.localeCompare(b.date) || (a.time||'').localeCompare(b.time||''));
+}
+function refreshAgenda() {
+  try { renderEvCalendar(); renderEvList(); updateReminderWidget(); } catch (e) {}
+}
 async function loadEvents() {
   if (!window._userId) return;
   const { data, error } = await sb.from('events').select('*').eq('user_id', window._userId).order('date').order('time');
@@ -2589,14 +2620,15 @@ function checkAutoTaskFromEvents() {
 function updateReminderWidget() {
   const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowStr = tomorrow.toISOString().split('T')[0];
-  const next = events.find(e => e.date >= tomorrowStr);
+  const next = allEvents().find(e => e.date >= tomorrowStr);
   const el = document.getElementById('rem-text');
   if (!el) return;
-  if (!next) { el.textContent = 'sem eventos'; return; }
+  if (!next) { el.textContent = 'sem eventos'; try { renderClientCalendar(); } catch (e) {} return; }
   const d = new Date(next.date + 'T12:00:00');
   const label = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
   const timeStr = next.time ? ` ${next.time.substring(0,5)}` : '';
   el.textContent = `${label}${timeStr} · ${next.name}`;
+  try { renderClientCalendar(); } catch (e) {}
 }
 
 function evNavMonth(dir) {
@@ -2626,7 +2658,7 @@ function renderEvCalendar() {
 
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${evCalYear}-${String(evCalMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dayEvents = events.filter(e => e.date <= dateStr && (e.end_date ? e.end_date >= dateStr : e.date === dateStr));
+    const dayEvents = allEvents().filter(e => e.date <= dateStr && (e.end_date ? e.end_date >= dateStr : e.date === dateStr));
     const cell = document.createElement('div');
     let cls = 'ev-cal-day';
     if (dateStr === today) cls += ' today';
@@ -2657,7 +2689,7 @@ function renderEvCalendar() {
 function renderEvList() {
   const list = document.getElementById('ev-list');
   const today = todayStr();
-  const upcoming = events.filter(e => e.date >= today).slice(0, 15);
+  const upcoming = allEvents().filter(e => e.date >= today).slice(0, 15);
   if (!upcoming.length) { list.innerHTML = '<div style="color:var(--mu);font-size:13px;padding:8px 0">Nenhum compromisso próximo.</div>'; return; }
   list.innerHTML = upcoming.map(e => {
     const d = new Date(e.date + 'T12:00:00');
@@ -2666,6 +2698,12 @@ function renderEvList() {
     const label = dStart + dEnd;
     const timeStr = e.time ? ` · ${e.time.substring(0,5)}` : '';
     const themeStr = e.theme ? `<div class="ev-item-meta">📌 ${rich(e.theme)}</div>` : '';
+    if (e._client) {
+      return `<div class="ev-item ev-item-cl">
+      <div><div class="ev-item-name">${rich(e.name)}</div><div class="ev-item-meta">${label} · <b>${e._kind}</b> · da aba Clientes</div>${themeStr}</div>
+      <span style="white-space:nowrap"><button class="ev-item-del" style="opacity:.6" onclick="openClientEdit(${e._client})" title="Editar / reagendar">✎</button></span>
+    </div>`;
+    }
     return `<div class="ev-item">
       <div><div class="ev-item-name">${rich(e.name)}</div><div class="ev-item-meta">${label}${timeStr}</div>${themeStr}</div>
       <span style="white-space:nowrap"><button class="ev-item-del" style="opacity:.6" onclick="editEvent('${e.id}')" title="Editar">✎</button><button class="ev-item-del" onclick="deleteEvent('${e.id}')" title="Remover">🗑</button></span>
