@@ -626,6 +626,21 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
   .auth-logo-big{font-size:22px;}
   #user-name-display{display:none;}
 }
+
+/* MENU DE TELAS NA BARRA VERDE */
+#hdr #bottom-nav{position:static!important;display:flex;background:none;border:none;height:auto;gap:4px;flex-shrink:0}
+#hdr .bnav-btn{flex:none;flex-direction:row;gap:6px;padding:7px 12px;border-radius:10px;color:rgba(250,247,242,.75);font-size:14px;font-weight:600;letter-spacing:.2px}
+#hdr .bnav-btn:hover{background:rgba(255,255,255,.12);color:#faf7f2}
+#hdr .bnav-btn.active{background:#faf7f2;color:var(--a3)}
+#hdr .bnav-btn .bico{font-size:18px}
+@media (max-width:900px){#hdr .bnav-btn span:not(.bico){display:none}#hdr .bnav-btn{padding:7px 9px}}
+@media (max-width:768px){
+  #right{padding-bottom:20px!important}
+  #eventos-screen{padding-bottom:0!important}
+  #toast{bottom:20px!important}
+  #clientes-screen.active,#estudos-screen.active,#eventos-screen.active{bottom:0!important}
+}
+@media (max-width:480px){#date-str{display:none}#hdr .bnav-btn{padding:6px 7px}}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -700,6 +715,24 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
 <div id="app">
   <header id="hdr">
     <div class="logo">FocusFlow ✦</div>
+  <nav id="bottom-nav">
+      <button class="bnav-btn active" id="bnav-main" onclick="showScreen('main')">
+        <span class="bico">📋</span>
+        <span>Tarefas</span>
+      </button>
+      <button class="bnav-btn" id="bnav-clientes" onclick="showScreen('clientes')">
+        <span class="bico">👥</span>
+        <span>Clientes</span>
+      </button>
+      <button class="bnav-btn" id="bnav-estudos" onclick="showScreen('estudos')">
+        <span class="bico">📚</span>
+        <span>Estudos</span>
+      </button>
+      <button class="bnav-btn" id="bnav-eventos" onclick="showScreen('eventos')">
+        <span class="bico">📅</span>
+        <span>Agenda</span>
+      </button>
+    </nav>
     <div class="hdr-mid">
       <div style="text-align:center">
         <div id="clock" style="color:var(--a3)">00:00:00</div>
@@ -966,24 +999,6 @@ a.lnk{color:#2f6fb0;text-decoration:underline;word-break:break-all;cursor:pointe
     </div>
   </div>
 
-  <nav id="bottom-nav">
-    <button class="bnav-btn active" id="bnav-main" onclick="showScreen('main')">
-      <span class="bico">📋</span>
-      <span>Tarefas</span>
-    </button>
-    <button class="bnav-btn" id="bnav-clientes" onclick="showScreen('clientes')">
-      <span class="bico">👥</span>
-      <span>Clientes</span>
-    </button>
-    <button class="bnav-btn" id="bnav-estudos" onclick="showScreen('estudos')">
-      <span class="bico">📚</span>
-      <span>Estudos</span>
-    </button>
-    <button class="bnav-btn" id="bnav-eventos" onclick="showScreen('eventos')">
-      <span class="bico">📅</span>
-      <span>Agenda</span>
-    </button>
-  </nav>
 </div>
 
 <div id="toast"></div>
